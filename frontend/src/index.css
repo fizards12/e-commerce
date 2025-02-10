@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .alert {
+    @apply flex my-2 justify-center font-semibold; 
+  }
+  .alert-md {
+    @apply py-3 rounded-lg;
+  }
+  .alert-sm {
+    @apply py-1 rounded-md text-xs;
+  }
+  .alert-success {
+    color: var(--fallback-suc, oklch(var(--su) / var(--tw-text-opacity)));
+    --alert-bg : var(--fallback-su, oklch(var(--su) / 0.4));
+  }
+  
+  .alert-warning {
+    color: var(--fallback-wac, oklch(var(--wa) / var(--tw-text-opacity)));
+    --alert-bg : var(--fallback-wa, oklch(var(--wa) / 0.4));
+  }
+  .alert-error {
+    color: var(--fallback-erc, oklch(var(--er) / var(--tw-text-opacity)));
+    --alert-bg : var(--fallback-er, oklch(var(--er) / 0.4));
+  }
+  .label-text-lg {
+    @apply text-lg;
+  }
+  .label-text-alt-lg {
+    @apply text-md;
+  }
+  .label-text-sm{
+    @apply text-sm;
+  }
+  .label-text-alt-sm{
+    @apply text-xs;
+  }
+}
+
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #333;
+}
+
+h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #444;
+}
+
+h3 {
+  font-size: 1.75rem;
+  font-weight: bold;
+  color: #555;
+}
+
+h4 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #666;
+}
+
+h5 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #777;
+}
+
+h6 {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #888;
+}
