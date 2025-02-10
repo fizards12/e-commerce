@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { createProductThunk } from "../../../../stores/products/productsThunk";
 import { showToastThunk } from "../../../../stores/app/app";
 import { IProduct } from "../../../../schemas/product";
+import AutoComplete, { Option } from "../../../../components/atoms/AutoComplete/AutoComplete";
 
 const initialValues: IProduct = {
   name: "",
@@ -18,7 +19,7 @@ const NewProduct = () => {
   const dispatch = useDispatch<AppDispatch>();
   const categories = useSelector(
     (state: RootState) => state.products.categories
-  );
+  ).map(category => ({ id: category.id, name: category.name }));
   const onSubmit = async (
     values: IProduct,
     { setSubmitting }: FormikHelpers<IProduct>
@@ -46,7 +47,7 @@ const NewProduct = () => {
         validationSchema={NewProductSchema}
         onSubmit={onSubmit}
       >
-        {({ errors, touched }) => (
+        {({ errors, touched, setFieldValue }) => (
           <Form>
             <Field
               error={errors.name}
@@ -54,9 +55,10 @@ const NewProduct = () => {
               type="text"
               id="name"
               name="name"
-              label="Name"
+              label="Product Name"
               size="sm"
             />
+            <div className="flex gap-2">
             <Field
               error={errors.price}
               touched={touched.price}
@@ -75,6 +77,7 @@ const NewProduct = () => {
               label="Stock"
               size="sm"
             />
+            </div>
             <Field
               error={errors.description}
               touched={touched.description}
@@ -86,25 +89,15 @@ const NewProduct = () => {
             />
             <div>
               <label className="label font-semibold">Product Category</label>
-              {categories.map((category, index) => (
-                <Field
-                  key={index}
-                  error={errors.category}
-                  touched={touched.category}
-                  as={"radio"}
-                  value={category.id}
-                  id="category"
-                  classes={{
-                    wrapperClass: "flex-row flex-wrap items-center",
-                    labelClass: "order-2 font-semibold",
-                    errorClass: "w-full order-3",
-                    fieldClass: "order-1 radio-bordered",
-                  }}
-                  name="category"
-                  label={category.name}
-                  size="sm"
-                />
-              ))}
+              <AutoComplete
+                options={categories}
+                fieldDisplay="name"
+                name="category"
+                onChange={(value: Option) => setFieldValue("category", value.id)}
+              />
+              {errors.category && touched.category && (
+                <div className="text-red-500">{errors.category}</div>
+              )}
             </div>
             <button className="mt-2 btn btn-primary" type="submit">
               Create

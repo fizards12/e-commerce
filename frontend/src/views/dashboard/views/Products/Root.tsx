@@ -1,5 +1,4 @@
 import { Outlet } from "react-router-dom";
-import Container from "../../../../components/atoms/Container/Container";
 import NavbarLink from "../../../../components/atoms/NavbarLink";
 import { Suspense } from "react";
 import Loading from "../../../../components/Loading";
@@ -15,7 +14,7 @@ const productsNavList = [
 ];
 const Root = () => {
   return (
-    <div>
+    <div className="flex flex-col h-full gap-3">
       <ul className="flex gap-2">
         {productsNavList.map((item) => (
           <li key={item.path}>
@@ -29,11 +28,11 @@ const Root = () => {
           </li>
         ))}
       </ul>
-      <Container cardClassName="p-2">
+      <div className="flex-1 rounded-box p-4 bg-white">
         <Suspense fallback={<Loading/>}>
           <Outlet />
         </Suspense>
-      </Container>
+      </div>
     </div>
   );
 };

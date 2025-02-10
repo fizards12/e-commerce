@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { deleteProductThunk } from "../../../../stores/products/productsThunk";
 import { showToastThunk } from "../../../../stores/app/app";
+import { IProduct } from "../../../../schemas/product";
 const deleteProduct = (dispatch: AppDispatch, id: string) => async () => {
   await dispatch(deleteProductThunk(id));
   dispatch(
@@ -22,8 +23,8 @@ const Products = () => {
   return (
     <div className="flex-1">
       <h4>Products</h4>
-      <ul className="list-disc pl-5">
-        {products.map((product, index) => (
+      <ul className="list-disc">
+        {products.map((product :IProduct, index) => (
           <li key={index} className="flex justify-between items-center">
             <div className="p-2 flex gap-2 justify-between items-center w-full">
               <span>{product.name}</span>

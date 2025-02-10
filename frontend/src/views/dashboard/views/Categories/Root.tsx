@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import Container from "../../../../components/atoms/Container/Container";
+import Wrapper from "../../../../components/atoms/Wrapper/Wrapper";
 import NavbarLink from "../../../../components/atoms/NavbarLink";
 const productsNavList = [
   {
@@ -14,7 +14,7 @@ const productsNavList = [
 const Root = () => {
   return (
     <div className="flex flex-col h-full">
-      <Container cardClassName="!bg-transparent shadow-none overflow-visible">
+      <Wrapper cardClassName="!bg-transparent shadow-none overflow-visible">
       <ul className="flex gap-1">
         {productsNavList.map((item) => (
           <li key={item.path}>
@@ -28,10 +28,10 @@ const Root = () => {
           </li>
         ))}
       </ul>
-      </Container>
-      <Container cardClassName="p-2 flex-1" className="flex-1">
+      </Wrapper>
+      <Wrapper cardClassName="p-2 flex-1" className="flex-1">
         <Outlet />
-      </Container>
+      </Wrapper>
     </div>
   );
 };

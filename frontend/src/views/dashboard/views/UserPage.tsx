@@ -1,8 +1,8 @@
-import Container from "../../../components/atoms/Container/Container"
+import Wrapper from "../../../components/atoms/Wrapper/Wrapper"
 
 const UserPage = () => {
   return (
-    <Container>UserPage</Container>
+    <Wrapper>UserPage</Wrapper>
   )
 }
 
