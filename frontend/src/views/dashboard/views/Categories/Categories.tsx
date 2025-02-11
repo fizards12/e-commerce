@@ -21,7 +21,7 @@ const Categories = () => {
   const dispatch = useDispatch<AppDispatch>();
   return (
     <div className="flex-1">
-      <h1>Categories</h1>
+      <h4>Categories</h4>
       <ul className="list-disc pl-5">
         {categories.map((category, index) => (
           <li key={index} className="flex justify-between items-center">

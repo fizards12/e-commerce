@@ -1,7 +1,6 @@
 import { Outlet } from "react-router-dom";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
-import Wrapper from "../../../components/atoms/Wrapper/Wrapper";
 
 const Root = () => {
   return (
@@ -9,9 +8,9 @@ const Root = () => {
       <Sidebar />
       <div className="flex w-full flex-col h-full">
         <Header />
-        <Wrapper className="flex-1" cardClassName="p-0 bg-transparent shadow-none rounded-none">
-            <Outlet />
-        </Wrapper>
+        <div className="p-3 flex-1">
+          <Outlet />
+        </div>
       </div>
     </div>
   );

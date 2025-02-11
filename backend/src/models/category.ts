@@ -11,6 +11,7 @@ const categorySchema = new Schema<ICategory>({
 const transform = (doc: Document, ret: Partial<ICategory>): Partial<ICategory> => {
   ret.id = (ret._id as Schema.Types.ObjectId).toString();
   delete ret._id;
+  delete ret.__v;
   return ret;
 };
 categorySchema.set('toJSON', { transform });

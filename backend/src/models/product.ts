@@ -1,8 +1,8 @@
 import { Schema, Types, model } from 'mongoose';
-import { IProduct, ProductWithCategoryId } from '../interfaces/product';
+import { IProduct, ProductWithCategory, ProductWithCategoryId } from '../interfaces/product';
 import { Document } from 'mongoose';
 
-const productSchema = new Schema<ProductWithCategoryId>({
+const productSchema = new Schema<ProductWithCategoryId | ProductWithCategory>({
   name: { type: String, required: true },
   description: { type: String, required: true },
   img: { type: String },
@@ -13,9 +13,10 @@ const productSchema = new Schema<ProductWithCategoryId>({
   updatedAt: { type: Date, default: Date.now }
 });
 
-const transform = (doc: Document, ret: Partial<ProductWithCategoryId>): Partial<ProductWithCategoryId> => {
+const transform = (doc: Document, ret: Partial<ProductWithCategoryId | ProductWithCategory>): Partial<ProductWithCategoryId | ProductWithCategory> => {
   ret.id = (ret._id as Types.ObjectId).toString();
   delete ret._id;
+  delete ret.__v;
   return ret;
 };
 productSchema.set('toJSON', { transform });

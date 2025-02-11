@@ -4,6 +4,7 @@ import { Request } from 'express';
 
 export interface IProduct<T> extends Document {
     id?: string;
+    __v?: number;
     name?: string;
     img?: string;
     description?: string;

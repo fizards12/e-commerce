@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { Product } from '../models/product';
-import { ProductWithCategoryId } from '../interfaces/product';
+import { ProductWithCategory, ProductWithCategoryId } from '../interfaces/product';
 import { ErrorGenerator } from '../services/error';
 import { Errors } from '../enum/errors';
 
@@ -29,7 +29,7 @@ export const getProduct = async (req: Request, res: Response, next: NextFunction
         if (!product) {
             throw new ErrorGenerator(Errors.NOT_FOUND, "Product");
         }
-        res.status(200).send({ message: 'Product details', product });
+        res.status(200).send({ message: 'Product details', product: product.toJSON() });
     } catch (error) {
         if(error instanceof ErrorGenerator) {
             res.status(error.status).send({ error_type: error.type, message: error.message });
@@ -47,7 +47,7 @@ export const updateProduct = async (req: Request, res: Response, next: NextFunct
         if (!updatedProduct) {
             throw new ErrorGenerator(Errors.NOT_FOUND, "Product");
         }
-        res.status(200).send({ message: 'Product updated successfully', product: updatedProduct });
+        res.status(200).send({ message: 'Product updated successfully', product: updatedProduct.toJSON() });
     } catch (error) {
         if(error instanceof ErrorGenerator) {
             res.status(error.status).send({ error_type: error.type, message: error.message });
@@ -79,7 +79,7 @@ export const deleteProduct = async (req: Request, res: Response, next: NextFunct
 // Get multiple products
 export const getProducts = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const products = await Product.find().populate('category');
+        const products = (await Product.find().populate('category')).map((product) => product.toJSON());
         res.status(200).send({ message: 'List of products', products });
     } catch (error) {
         if(error instanceof ErrorGenerator) {

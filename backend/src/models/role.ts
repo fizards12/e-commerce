@@ -10,6 +10,8 @@ const roleSchema = new Schema<IRole>({
 
 const transform = (doc: Document, ret: Partial<IRole>): Partial<IRole> => {
   ret.id = (ret._id as Schema.Types.ObjectId).toString();
+  delete ret._id;
+  delete ret.__v;
   return ret;
 }
 

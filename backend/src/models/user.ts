@@ -17,6 +17,7 @@ function transform(doc: Document, ret: Partial<UserwithRoleId>): Partial<Userwit
   ret.id = (ret._id as Types.ObjectId).toString();
   delete ret.createdAt;
   delete ret.updatedAt;
+  delete ret.__v;
   delete ret.password;
   return ret;
 }

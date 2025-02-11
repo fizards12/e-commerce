@@ -1,4 +1,4 @@
-import { Key, useState } from "react";
+import { Key, useEffect, useState } from "react";
 import {
   Combobox,
   ComboboxButton,
@@ -18,6 +18,7 @@ interface AutoCompleteProps<T = Option> {
   fieldDisplay?: string;
   filterField?: string;
   name?: string;
+  id?: string;
 }
 
 function filtering<T>(data: T[], filterBy: string, value: string) {
@@ -28,7 +29,7 @@ function filtering<T>(data: T[], filterBy: string, value: string) {
 
 const AutoComplete: React.FC<
   ComboboxProps<Option, boolean> & AutoCompleteProps
-> = ({ options, fieldDisplay, onChange,name, ...props }) => {
+> = ({ options, fieldDisplay, onChange,name, id,...props }) => {
   const [selectedOption, setSelectedOption] = useState<Option | null>(null);
   const [query, setQuery] = useState("");
     const changeHandler = (value: NoInfer<Option>) => {
@@ -42,7 +43,27 @@ const AutoComplete: React.FC<
     query === ""
       ? options
       : filtering(options, props.filterField || "name", query);
-
+  const optionsList = filteredOptions.map((option) => (
+    <ComboboxOption
+    className={"cursor-pointer"}
+      key={typeof option === "string" ? option : (option.id as Key)}
+      value={option}
+    >
+      {({ selected }) => (
+        <div
+          className={`transition-colors duration-150 text-black hover:bg-base-300 ${
+            selected ? "!bg-primary !text-white" : ""
+          }
+           p-2`}
+        >
+          <span>{getValue(option, fieldDisplay || "name")}</span>
+        </div>
+      )}
+    </ComboboxOption>
+  ))
+  useEffect(()=>{
+    setQuery(getValue(selectedOption, fieldDisplay || "name") || '');
+  },[selectedOption,fieldDisplay])
   return (
     <Combobox
       as={"div"}
@@ -59,30 +80,19 @@ const AutoComplete: React.FC<
             }
           >
             <ComboboxInput
+              displayValue={(selectedOption) => getValue(selectedOption, fieldDisplay || "name")}
               onChange={(event) => setQuery(event.target.value)}
               className=""
+              id={id}
             />
             <span>{open ? <BiUpArrow /> : <BiDownArrow />}</span>
           </ComboboxButton>
           <ComboboxOptions
-            className={"absolute z-10 top-full left-0 mt-2 w-full"}
+            className={"absolute z-10 top-full left-0 mt-2 w-full shadow-lg rounded-box overflow-y-auto bg-base-200"}
           >
-            {filteredOptions.map((option) => (
-              <ComboboxOption
-                key={typeof option === "string" ? option : (option.id as Key)}
-                value={option}
-              >
-                {({ focus }) => (
-                  <div
-                    className={`${
-                      focus ? "bg-blue-500 text-white" : "bg-white text-black"
-                    } p-2`}
-                  >
-                    {getValue(option, fieldDisplay || "name")}
-                  </div>
-                )}
-              </ComboboxOption>
-            ))}
+            
+            {optionsList.length > 0 && optionsList.map((option) => option)}
+            {optionsList.length === 0 && <div className="p-2">No results</div>}
           </ComboboxOptions>
         </>
       )}

@@ -8,7 +8,7 @@ function Header() {
   const dispatcher = useDispatch<AppDispatch>();
   return (
     <Wrapper>
-      <header className="p-2 w-full flex justify-between">
+      <header className="w-full flex justify-between">
         <div className="flex gap-2 items-center">
           <div className="drawer-content md:hidden">
             <label
@@ -18,7 +18,7 @@ function Header() {
               <BiMenu size={25} />
             </label>
           </div>
-          <h2>DaisyUI</h2>
+          <h4 className="uppercase">DaisyUI</h4>
         </div>
         <div className="flex items-center">
           <button

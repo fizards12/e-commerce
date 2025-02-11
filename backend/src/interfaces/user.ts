@@ -4,6 +4,7 @@ import { Request } from "express";
 
 export interface IUser<T> extends Document {
   id: string;
+  __v?: number
   name: string;
   email: string;
   password?: string;

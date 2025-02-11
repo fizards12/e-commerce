@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getValue(obj: any, key: string) {
-    if (!key) {
+    if (!key || !obj) {
         return undefined;
     }
     const keys = key.split('.');

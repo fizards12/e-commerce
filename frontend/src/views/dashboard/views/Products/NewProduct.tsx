@@ -6,7 +6,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { createProductThunk } from "../../../../stores/products/productsThunk";
 import { showToastThunk } from "../../../../stores/app/app";
 import { IProduct } from "../../../../schemas/product";
-import AutoComplete, { Option } from "../../../../components/atoms/AutoComplete/AutoComplete";
+import AutoComplete, {
+  Option,
+} from "../../../../components/atoms/AutoComplete/AutoComplete";
 
 const initialValues: IProduct = {
   name: "",
@@ -19,7 +21,7 @@ const NewProduct = () => {
   const dispatch = useDispatch<AppDispatch>();
   const categories = useSelector(
     (state: RootState) => state.products.categories
-  ).map(category => ({ id: category.id, name: category.name }));
+  ).map((category) => ({ id: category.id, name: category.name }));
   const onSubmit = async (
     values: IProduct,
     { setSubmitting }: FormikHelpers<IProduct>
@@ -49,34 +51,60 @@ const NewProduct = () => {
       >
         {({ errors, touched, setFieldValue }) => (
           <Form>
-            <Field
-              error={errors.name}
-              touched={touched.name}
-              type="text"
-              id="name"
-              name="name"
-              label="Product Name"
-              size="sm"
-            />
             <div className="flex gap-2">
-            <Field
-              error={errors.price}
-              touched={touched.price}
-              type="number"
-              id="price"
-              name="price"
-              label="Price"
-              size="sm"
-            />
-            <Field
-              error={errors.stock}
-              touched={touched.stock}
-              type="number"
-              id="stock"
-              name="stock"
-              label="Stock"
-              size="sm"
-            />
+              <Field
+                error={errors.name}
+                touched={touched.name}
+                classes={{
+                  wrapperClass: "flex-1",
+                }}
+                type="text"
+                id="name"
+                name="name"
+                label="Product Name"
+                size="sm"
+              />
+              <Field
+                error={errors.price}
+                touched={touched.price}
+                classes={{
+                  wrapperClass: "flex-1",
+                }}
+                type="number"
+                id="price"
+                name="price"
+                label="Price"
+                size="sm"
+              />
+              <Field
+                error={errors.stock}
+                touched={touched.stock}
+                classes={{
+                  wrapperClass: "flex-1",
+                }}
+                type="number"
+                id="stock"
+                name="stock"
+                label="Stock"
+                size="sm"
+              />
+            </div>
+            <div className="flex-col flex gap-1 items-start">
+              <label htmlFor="category" className="label label-text">
+                Product Category
+              </label>
+              <AutoComplete
+                options={categories}
+                fieldDisplay="name"
+                name="category"
+                id="category"
+                onChange={(value: Option) =>
+                  setFieldValue("category", value?.id || "")
+                }
+              />
+              {errors.category && touched.category && (
+                <div className="text-red-500">{errors.category}</div>
+              )}
             </div>
             <Field
               error={errors.description}
@@ -87,18 +115,6 @@ const NewProduct = () => {
               label="Description"
               size="sm"
             />
-            <div>
-              <label className="label font-semibold">Product Category</label>
-              <AutoComplete
-                options={categories}
-                fieldDisplay="name"
-                name="category"
-                onChange={(value: Option) => setFieldValue("category", value.id)}
-              />
-              {errors.category && touched.category && (
-                <div className="text-red-500">{errors.category}</div>
-              )}
-            </div>
             <button className="mt-2 btn btn-primary" type="submit">
               Create
             </button>
