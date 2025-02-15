@@ -16,3 +16,10 @@ export function getValue(obj: any, key: string) {
     }
     return value;
 }
+
+export const normalizeArray = <T extends object>(array: T[],key: keyof T = "id" as keyof T): {[key : string]: T} => {
+    return array.reduce((acc : {[key : string]: T},item : T) => {
+        acc[String(item[key])] = item;
+        return acc;
+    },{})
+} 

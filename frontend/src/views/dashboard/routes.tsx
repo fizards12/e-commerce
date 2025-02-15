@@ -1,4 +1,4 @@
-import { RouteObject } from "react-router-dom";
+import { Navigate, RouteObject } from "react-router-dom";
 import LazyComponent from "../../components/atoms/HOC/lazyComponent";
 import AuthorizedRoute from "../../router/AuthorizedRoute";
 import ProtectedRoute from "../../router/ProtectedRoute";
@@ -8,6 +8,7 @@ import NewProduct from "./views/Products/NewProduct";
 import NewCategory from "./views/Categories/NewCategory";
 import Product from "./views/Products/Product";
 import { categoriesLoader, productsLoader } from "./loadersAndActions";
+import ErrorElement from "./layout/ErrorElement";
 
 const LazyProducts = LazyComponent(() => import("./views/Products/Products"));
 const LazyCategories = LazyComponent(
@@ -51,7 +52,7 @@ export const dashboardRoutes: RouteObject = {
             },
             {
               path: "edit",
-              element: <Product />,
+              element: <NewProduct />,
             },
           ],
         },
@@ -71,19 +72,26 @@ export const dashboardRoutes: RouteObject = {
         },
         {
           path: ":id",
-          element: <LazyCategory />,
           children: [
             {
-              path: "edit",
-              element: <LazyProducts />,
+              index: true,
+              element: <LazyCategory />,
             },
             {
-              path: "show",
-              element: <LazyProducts />,
+              path: "edit",
+              element: <NewCategory />,
             },
           ],
         },
       ],
     },
+    {
+      path: 'not-found',
+      element: <ErrorElement/>
+    },
+    {
+      path: '*',
+      element: <Navigate to="/dashboard/not-found"/>
+    }
   ],
 };

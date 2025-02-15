@@ -18,7 +18,7 @@ export const getUser = async (
   next: NextFunction
 ) => {
   try {
-    if (!req.params.id || isObjectIdOrHexString(req.params.id) === false) {
+    if (!req.params.id || !isObjectIdOrHexString(req.params.id)) {
       throw new ErrorGenerator(Errors.INVALID_ID, "User");
     }
     const user = await User.findById(req.params.id).populate("role");

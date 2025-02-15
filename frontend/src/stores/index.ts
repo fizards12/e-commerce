@@ -3,11 +3,13 @@ import { persistStore } from 'redux-persist';
 import authReducer from './auth/auth';
 import appReducer from './app/app';
 import productsReducer from './products/products';
+import categoriesReducer from './categories/categories';
 
 const rootReducer = combineReducers({
   auth: authReducer,
   app: appReducer,
-  products: productsReducer
+  products: productsReducer,
+  categories: categoriesReducer
   // ...add other reducers here...
 });
 

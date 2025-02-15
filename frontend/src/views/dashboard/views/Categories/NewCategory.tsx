@@ -1,35 +1,32 @@
-import { Formik, Form, FormikHelpers } from "formik";
+import { Formik, Form } from "formik";
 import { NewCategorySchema } from "../../../../schemas/validations/product";
 import Field from "../../../../components/atoms/Field/Field";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../../stores";
 import { ICategory } from "../../../../schemas/category";
-import { createCategoryThunk } from "../../../../stores/products/productsThunk";
-import { showToastThunk } from "../../../../stores/app/app";
+import { useEffect, useState } from "react";
+import { useFetchDoc } from "../../../../Hooks/useFetchDoc";
+import { useParams } from "react-router-dom";
+import { useMutateDoc } from "../../../../Hooks/useMutateDoc";
 const initialValues: ICategory = {
   name: "",
   description: "",
 };
 const NewCategory = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const onSubmit = async (
-    values: ICategory,
-    { setSubmitting }: FormikHelpers<ICategory>
-  ) => {
-    setSubmitting(true);
-    try {
-      await dispatch(createCategoryThunk(values)).unwrap();
-      dispatch(showToastThunk({ type:"success", message: "Category created successfully", duration: 2000 }));
-    } finally {
-      setSubmitting(false);
+  const { id } = useParams();
+  const [c] = useFetchDoc('category', id);
+  const [category, setCategory] = useState<ICategory>(initialValues);
+  useEffect(()=>{
+    if(c ){
+      setCategory({...c});
     }
-  };
+  },[c])
+  const { mutate : onSubmit } = useMutateDoc('category', id);
 
   return (
     <div>
-      <h4>New Category</h4>
+      <h4>{id? "Update Category" : 'New Category'}</h4>
       <Formik
-        initialValues={initialValues}
+        initialValues={category}
+        enableReinitialize
         validationSchema={NewCategorySchema}
         onSubmit={onSubmit}
       >
@@ -58,7 +55,8 @@ const NewCategory = () => {
                 size="sm"
               />
               <button disabled={isSubmitting} className="mt-2 btn btn-primary" type="submit">
-                {isSubmitting ? "Creating..." : "Create"}
+                {!id && (isSubmitting ? "Creating..." : "Create")}
+                {id && (isSubmitting ? "Updating..." : "Update")}
               </button>
             </Form>
           </>

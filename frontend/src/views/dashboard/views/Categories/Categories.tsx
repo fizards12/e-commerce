@@ -1,9 +1,12 @@
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../../../stores";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../../stores";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { deleteCategoryThunk } from "../../../../stores/products/productsThunk";
 import { showToastThunk } from "../../../../stores/app/app";
+import { deleteCategoryThunk } from "../../../../stores/categories/categoriesThunk";
+import Table, { ColumnProps } from "../../../../components/atoms/Table/Table";
+import { ICategory } from "../../../../schemas/category";
+import { useFetchDocList } from "../../../../Hooks/useFetchDoc";
 const deleteCategory = (dispatch: AppDispatch, id: string) => async () => {
   await dispatch(deleteCategoryThunk(id));
   dispatch(
@@ -14,37 +17,39 @@ const deleteCategory = (dispatch: AppDispatch, id: string) => async () => {
     })
   );
 };
+
+const columns = (dispatch: AppDispatch) : ColumnProps<ICategory>[] => [
+  {
+    field: "name",
+    label: "Category Name",
+  },
+  {
+    field: "actions",
+    render: (row) => (
+      <div className="flex gap-2">
+        <Link
+          to={`${row.id}`}
+          className="btn btn-sm btn-circle btn-primary btn-outline border-0 mr-2"
+        >
+          <FaEdit />
+        </Link>
+        <button
+          onClick={deleteCategory(dispatch, row.id || "")}
+          className="btn btn-sm btn-circle btn-outline border-0 btn-error"
+        >
+          <FaTrash />
+        </button>
+      </div>
+    ),
+  }
+];
 const Categories = () => {
-  const categories = useSelector(
-    (state: RootState) => state.products.categories
-  );
+  const [categories] = useFetchDocList('category');
   const dispatch = useDispatch<AppDispatch>();
   return (
     <div className="flex-1">
       <h4>Categories</h4>
-      <ul className="list-disc pl-5">
-        {categories.map((category, index) => (
-          <li key={index} className="flex justify-between items-center">
-            <div className="p-2 flex gap-2 justify-between items-center w-full">
-              <span>{category.name}</span>
-              <div>
-                <Link
-                  to={`${category.id}`}
-                  className="btn btn-sm btn-circle btn-primary btn-outline border-0 mr-2"
-                >
-                  <FaEdit />
-                </Link>
-                <button
-                  onClick={deleteCategory(dispatch, category.id || "")}
-                  className="btn btn-sm btn-circle btn-outline border-0 btn-error"
-                >
-                  <FaTrash />
-                </button>
-              </div>
-            </div>
-          </li>
-        ))}
-      </ul>
+      <Table data={categories} columns={columns(dispatch)} />
     </div>
   );
 };

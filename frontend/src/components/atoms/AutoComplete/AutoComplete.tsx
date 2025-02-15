@@ -1,4 +1,4 @@
-import { Key, useEffect, useState } from "react";
+import { Key } from "react";
 import {
   Combobox,
   ComboboxButton,
@@ -9,40 +9,25 @@ import {
 } from "@headlessui/react";
 import { getValue } from "../../../utils/utils";
 import { BiDownArrow, BiUpArrow } from "react-icons/bi";
+import { useAutoComplete } from "./useAutoComplete";
 
 export interface Option {
-  [key: string]: unknown;
+  id?: string;
+  name?: string;
 }
-interface AutoCompleteProps<T = Option> {
-  options: T[];
+export interface AutoCompleteProps<T = Option> {
+  list: T[];
   fieldDisplay?: string;
   filterField?: string;
   name?: string;
+  val?:string;
   id?: string;
 }
-
-function filtering<T>(data: T[], filterBy: string, value: string) {
-  return data.filter((el) => {
-    return getValue(el, filterBy).includes(value);
-  });
-}
-
 const AutoComplete: React.FC<
   ComboboxProps<Option, boolean> & AutoCompleteProps
-> = ({ options, fieldDisplay, onChange,name, id,...props }) => {
-  const [selectedOption, setSelectedOption] = useState<Option | null>(null);
-  const [query, setQuery] = useState("");
-    const changeHandler = (value: NoInfer<Option>) => {
-        if (onChange) {
-            onChange(value);
-        }
-        setSelectedOption(value);
-
-    }
-  const filteredOptions =
-    query === ""
-      ? options
-      : filtering(options, props.filterField || "name", query);
+> = ({ list, fieldDisplay, onChange,name,val, id,...props }) => {
+  const {filteredOptions,changeHandler, setQuery, selectedOption} = useAutoComplete({ list, fieldDisplay, onChange,name,val, id,...props })
+  
   const optionsList = filteredOptions.map((option) => (
     <ComboboxOption
     className={"cursor-pointer"}
@@ -61,9 +46,6 @@ const AutoComplete: React.FC<
       )}
     </ComboboxOption>
   ))
-  useEffect(()=>{
-    setQuery(getValue(selectedOption, fieldDisplay || "name") || '');
-  },[selectedOption,fieldDisplay])
   return (
     <Combobox
       as={"div"}

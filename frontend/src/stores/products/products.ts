@@ -1,18 +1,19 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IProduct } from '../../schemas/product';
-import { ICategory } from '../../schemas/category';
-import { fetchProducts, fetchProduct, fetchCategories, createCategoryThunk, updateCategoryThunk, deleteCategoryThunk, createProductThunk, updateProductThunk, deleteProductThunk } from './productsThunk';
+import { fetchProducts, fetchProduct, createProductThunk, updateProductThunk, deleteProductThunk } from './productsThunk';
 import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
+import { normalizeArray } from '../../utils/utils';
+import { RootState } from '..';
 
 interface ProductsState {
-  products: IProduct[];
-  categories: ICategory[];
+  data: Record<string, IProduct>;
+  length: number;
 }
 
 const initialState: ProductsState = {
-  products: [],
-  categories: [],
+  data: {},
+  length: 0
 };
 
 const persistConfig = {
@@ -27,40 +28,37 @@ const productsSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchProducts.fulfilled, (state, action: PayloadAction<{ products: IProduct[] }>) => {
-        state.products = action.payload.products;
+        state.data = normalizeArray(action.payload.products);
+        state.length = action.payload.products.length;
       })
-      .addCase(fetchProduct.fulfilled, (state: ProductsState,action: PayloadAction<{ product: IProduct }>) => {
-        state.products = state.products.map((product) =>
-          product.id === action.payload.product.id ? action.payload.product : product
-        );
+      .addCase(fetchProduct.fulfilled, (state: ProductsState, action: PayloadAction<{ product: IProduct }>) => {
+        state.data[String(action.payload.product.id)] = action.payload.product
       })
       .addCase(createProductThunk.fulfilled, (state, action: PayloadAction<{ product: IProduct }>) => {
-        state.products.push(action.payload.product);
+        state.data[String(action.payload.product.id)] = action.payload.product;
+        state.length += 1;
       })
       .addCase(updateProductThunk.fulfilled, (state, action: PayloadAction<{ product: IProduct }>) => {
-        state.products = state.products.map(product =>
-          product.id === action.payload.product.id ? action.payload.product : product
-        );
+        state.data[String(action.payload.product.id)] = action.payload.product;
       })
       .addCase(deleteProductThunk.fulfilled, (state: ProductsState, action: PayloadAction<{ id: string }>) => {
-        state.products = state.products.filter(product => product.id !== action.payload.id);
-      })
-      .addCase(fetchCategories.fulfilled, (state,action: PayloadAction<{ categories: ICategory[] }>) => {
-        state.categories = action.payload.categories;
-      })
-      .addCase(createCategoryThunk.fulfilled, (state, action: PayloadAction<{ category: ICategory }>) => {
-        state.categories.push(action.payload.category);
-      })
-      .addCase(updateCategoryThunk.fulfilled, (state, action : PayloadAction<{ category: ICategory }>) => {
-        state.categories = state.categories.map(category =>
-          category.id === action.payload.category.id ? action.payload.category : category
-        );
-      })
-      .addCase(deleteCategoryThunk.fulfilled, (state : ProductsState, action : PayloadAction<{ id: string }>) => {
-        state.categories = state.categories.filter(category => category.id !== action.payload.id);
+        delete state.data[String(action.payload.id)];
+        state.length -= 1;
       })
   },
 });
+
+const selectProducts = (state: RootState) => state.products.data;
+const selectCategories = (state: RootState) => state.categories.data;
+
+export const selectedProducts = createSelector(
+  [selectProducts, selectCategories],
+  (products, categories) =>
+    Object.values(products).map((product) => ({
+      ...product,
+      category: categories[String(product.category)] || {},
+    }))
+);
 
 const persistedProductsReducer = persistReducer(persistConfig, productsSlice.reducer);
 

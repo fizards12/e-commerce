@@ -33,6 +33,11 @@ export const getCategories = async () => {
     return response.data;
 }
 
+export const getCategory = async (id: string) => {
+    const response = await axios.get<{ categories: ICategory[] }>(`${SERVER_URL}/categories/${id}`);
+    return response.data;
+}
+
 export const createCategory = async (category: ICategory) => {
     const response = await axios.post<{ category: ICategory }>(`${SERVER_URL}/categories`, { category });
     return response.data;

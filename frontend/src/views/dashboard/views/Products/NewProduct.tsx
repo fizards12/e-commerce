@@ -1,16 +1,19 @@
 import { Formik, Form, FormikHelpers } from "formik";
 import { NewProductSchema } from "../../../../schemas/validations/product";
 import Field from "../../../../components/atoms/Field/Field";
-import { AppDispatch, RootState } from "../../../../stores";
-import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch } from "../../../../stores";
+import { useDispatch } from "react-redux";
 import { createProductThunk } from "../../../../stores/products/productsThunk";
 import { showToastThunk } from "../../../../stores/app/app";
 import { IProduct } from "../../../../schemas/product";
 import AutoComplete, {
   Option,
 } from "../../../../components/atoms/AutoComplete/AutoComplete";
+import { useFetchDoc, useFetchDocList } from "../../../../Hooks/useFetchDoc";
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 
-const initialValues: IProduct = {
+const initialValues: IProduct<string> = {
   name: "",
   stock: 0,
   price: 0,
@@ -18,13 +21,19 @@ const initialValues: IProduct = {
   category: "",
 };
 const NewProduct = () => {
+  const { id } = useParams();
   const dispatch = useDispatch<AppDispatch>();
-  const categories = useSelector(
-    (state: RootState) => state.products.categories
-  ).map((category) => ({ id: category.id, name: category.name }));
+  const [p] = useFetchDoc('product', id);
+  const [product, setProduct] = useState<IProduct<string>>(initialValues);
+  const [categories] = useFetchDocList('category');
+  useEffect(()=>{
+    if(p && typeof p.category == 'object'){
+      setProduct({...p, category: p.category.id || ''});
+    }
+  },[p])
   const onSubmit = async (
-    values: IProduct,
-    { setSubmitting }: FormikHelpers<IProduct>
+    values: IProduct<string>,
+    { setSubmitting }: FormikHelpers<IProduct<string>>
   ) => {
     setSubmitting(true);
     try {
@@ -43,9 +52,10 @@ const NewProduct = () => {
 
   return (
     <div>
-      <h4>New Product</h4>
+      <h4>{p ? "Edit Product" : 'New Product'}</h4>
       <Formik
-        initialValues={initialValues}
+      enableReinitialize
+        initialValues={product}
         validationSchema={NewProductSchema}
         onSubmit={onSubmit}
       >
@@ -94,8 +104,9 @@ const NewProduct = () => {
                 Product Category
               </label>
               <AutoComplete
-                options={categories}
+                list={categories?.map((c) => ({id: c.id, name: c.name})) || []}
                 fieldDisplay="name"
+                val={product.category || ''}
                 name="category"
                 id="category"
                 onChange={(value: Option) =>

@@ -3,6 +3,7 @@ import { Category } from '../models/category';
 import { ErrorGenerator } from '../services/error';
 import { Errors } from '../enum/errors';
 import { ICategory } from '../interfaces/category';
+import { MongooseError } from 'mongoose';
 
 interface RequestWithCategory extends Request {
     body:{
@@ -53,12 +54,21 @@ export const updateCategory = async (req: RequestWithCategory & { params: { id: 
             throw new ErrorGenerator(Errors.NOT_FOUND, "Category");
         }
         res.status(200).send({ message: 'Category updated successfully', category });
-    } catch (error) {
+    } catch (error : any) {
+        
         if(error instanceof ErrorGenerator){
             res.status(error.status).send({ error_type: error.type, message: error.message });
             return
         }
-        let err = new ErrorGenerator(Errors.ERROR_UPDATING, "Category", error);
+        let err : ErrorGenerator;
+        if(error.code == 11000){
+            let duplicateValues = Object.values((error as any).keyValue)[0] as string;
+            
+            err = new ErrorGenerator(Errors.DUPLICATE_KEYS, "Category", error, duplicateValues);
+            res.status(err.status).send({ error_type: err.type, message: err.message });
+            return
+        }
+        err = new ErrorGenerator(Errors.ERROR_UPDATING, "Category", error);
         next(err);
     }
 };

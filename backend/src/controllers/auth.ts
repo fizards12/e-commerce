@@ -12,7 +12,7 @@ export const register = async (req: Request, res: Response, next: NextFunction):
   try {
     const { name, email, password, address, phone, role } = req.body;
     let roleObjectId: Types.ObjectId;
-    if(!role && isObjectIdOrHexString(role) === false) {
+    if(!role || !isObjectIdOrHexString(role)) {
        throw new ErrorGenerator(Errors.INVALID_CREDENTIALS, "User");
     }
     roleObjectId = new Types.ObjectId(role);
@@ -60,7 +60,7 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
 
 export const getProfile = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
   try {
-    if (!req.body.id || isObjectIdOrHexString(req.body.id) === false) {
+    if (!req.body.id || !isObjectIdOrHexString(req.body.id)) {
       throw new ErrorGenerator(Errors.INVALID_ID, "User");
     }
     const user = await User.findById(req.body.id).populate('role') as UserWithRole;
