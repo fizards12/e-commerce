@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../../stores";
+import store, { AppDispatch } from "../../../../stores";
 import { Link } from "react-router-dom";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { deleteProductThunk } from "../../../../stores/products/productsThunk";
@@ -34,7 +34,7 @@ const columns = (dispatch: AppDispatch) : ColumnProps<IProduct>[] => [
   {
     field: "category",
     label: "Category",
-    render: (row) => typeof row.category == 'object' ? row.category.name : ''
+    render: (row) => store.getState().categories.data[String(row.category)]?.name || ""
   },
   {
     field: "actions",
@@ -61,14 +61,16 @@ const columns = (dispatch: AppDispatch) : ColumnProps<IProduct>[] => [
 const Products = () => {
   const [products,error] = useFetchDocList('product');
   const dispatch = useDispatch<AppDispatch>();
+  // update categories list
+  useFetchDocList('category');
   if(error){
     throw error
   }
   return products && (
-    <div className="flex-1">
-      <h4>Products</h4>
-      <div className="overflow-x-auto">
-        <Table data={products} columns={columns(dispatch)} />
+    <div className="card">
+      <div className="max-md:overflow-x-auto">
+        <Table data={Object.values(products)} columns={columns(dispatch)} />
+        <Link to="new" className="btn btn-sm w-full btn-primary">New Product</Link>
       </div>
     </div>
   );

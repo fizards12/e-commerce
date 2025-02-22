@@ -5,14 +5,14 @@ import { fetchCategories } from "../../stores/categories/categoriesThunk";
 
 export const categoriesLoader: LoaderFunction = async () => {
   const state: RootState = store.getState();
-  if (state.categories.data.length === 0) {
+  if (!state.categories.data) {
     await store.dispatch(fetchCategories());
   }
 };
 
 export const productsLoader: LoaderFunction = async () => {
   const state: RootState = store.getState();
-  if (state.products.data.length === 0){
+  if (!state.products.data){
     await store.dispatch(fetchProducts());
   }
 };

@@ -1,6 +1,5 @@
 import { useParams } from "react-router-dom"
 import { useFetchDoc } from "../../../../Hooks/useFetchDoc"
-import { GeneralError } from "../../../../services/error";
 
 const Product = () => {
   const params = useParams();

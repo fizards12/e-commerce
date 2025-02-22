@@ -1,9 +1,9 @@
 import { Schema, Types, model } from 'mongoose';
-import { IProduct, ProductWithCategory, ProductWithCategoryId } from '../interfaces/product';
+import { ProductWithCategory, ProductWithCategoryId } from '../interfaces/product';
 import { Document } from 'mongoose';
 
 const productSchema = new Schema<ProductWithCategoryId | ProductWithCategory>({
-  name: { type: String, required: true },
+  name: { type: String,unique: true, required: true },
   description: { type: String, required: true },
   img: { type: String },
   price: { type: Number, required: true },

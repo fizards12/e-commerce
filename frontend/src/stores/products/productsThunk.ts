@@ -9,8 +9,10 @@ export const fetchProducts = createAsyncThunk(
   'products/fetchProducts',
   async () => {
     const state : RootState = store.getState();
-    if(state.products.length === 0){
-      return await call(getProducts, []);
+    if(Object.values(state.products.data).length === 0){
+      return await call(getProducts, []).then((response)=>{
+        return { products: response.products };
+      });
     }
     return { products: Object.values(state.products.data) };
   }
@@ -30,14 +32,14 @@ export const fetchProduct = createAsyncThunk(
 
 export const createProductThunk = createAsyncThunk(
   'products/createProduct',
-  async (product: IProduct) => {
+  async (product: IProduct<string>) => {
     return await call(createProduct, [product]);
   }
 );
 
 export const updateProductThunk = createAsyncThunk(
   'products/updateProduct',
-  async (product: IProduct) => {
+  async (product: IProduct<string>) => {
     return await call(updateProduct, [product.id, product]);
   }
 );

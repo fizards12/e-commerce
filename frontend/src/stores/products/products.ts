@@ -24,7 +24,12 @@ const persistConfig = {
 const productsSlice = createSlice({
   name: 'products',
   initialState,
-  reducers: {},
+  reducers: {
+    reset: (state) => {
+      state.data = initialState.data
+      state.length = initialState.length
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchProducts.fulfilled, (state, action: PayloadAction<{ products: IProduct[] }>) => {
@@ -39,6 +44,7 @@ const productsSlice = createSlice({
         state.length += 1;
       })
       .addCase(updateProductThunk.fulfilled, (state, action: PayloadAction<{ product: IProduct }>) => {
+        console.log(action.payload.product)
         state.data[String(action.payload.product.id)] = action.payload.product;
       })
       .addCase(deleteProductThunk.fulfilled, (state: ProductsState, action: PayloadAction<{ id: string }>) => {
@@ -47,6 +53,8 @@ const productsSlice = createSlice({
       })
   },
 });
+
+export const { reset: resetProducts } = productsSlice.actions
 
 const selectProducts = (state: RootState) => state.products.data;
 const selectCategories = (state: RootState) => state.categories.data;

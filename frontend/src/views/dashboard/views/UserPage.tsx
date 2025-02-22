@@ -1,10 +1,13 @@
+import LayoutRoot from "../../../components/LayoutRoot";
 
 const UserPage = () => {
   return (
-    <div className="bg-white h-full card p-4 shadow-lg">
-      <h4>User Page</h4>
-    </div>    
-  )
-}
+    <LayoutRoot>
+      <div className="bg-white h-full card">
+        <h4>User Page</h4>
+      </div>
+    </LayoutRoot>
+  );
+};
 
-export default UserPage
+export default UserPage;

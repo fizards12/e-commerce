@@ -6,26 +6,20 @@ import ProductsRoot from "./views/Products/Root";
 import CategoriesRoot from "./views/Categories/Root";
 import NewProduct from "./views/Products/NewProduct";
 import NewCategory from "./views/Categories/NewCategory";
-import Product from "./views/Products/Product";
-import { categoriesLoader, productsLoader } from "./loadersAndActions";
 import ErrorElement from "./layout/ErrorElement";
 
 const LazyProducts = LazyComponent(() => import("./views/Products/Products"));
+const LazyNewProduct = LazyComponent(() => import("./views/Products/NewProduct"));
 const LazyCategories = LazyComponent(
   () => import("./views/Categories/Categories")
 );
-const LazyCategory = LazyComponent(() => import("./views/Categories/Category"));
+const LazyNewCategory = LazyComponent(() => import("./views/Categories/NewCategory"));
 const LazyUserPage = LazyComponent(() => import("./views/UserPage"));
 const LazyRoot = LazyComponent(() => import("./layout/Root"));
 
 export const dashboardRoutes: RouteObject = {
   path: "dashboard",
   element: <ProtectedRoute element={<LazyRoot />} />,
-  loader: async(args,handler) => {
-    await categoriesLoader(args,handler);
-    await productsLoader(args,handler);
-
-  },
   children: [
     {
       path: "user",
@@ -47,13 +41,10 @@ export const dashboardRoutes: RouteObject = {
           path: ":id",
           children: [
             {
+              // path: "edit",
               index: true,
-              element: <Product />,
-            },
-            {
-              path: "edit",
-              element: <NewProduct />,
-            },
+              element: <LazyNewProduct />,
+            }
           ],
         },
       ],
@@ -75,11 +66,8 @@ export const dashboardRoutes: RouteObject = {
           children: [
             {
               index: true,
-              element: <LazyCategory />,
-            },
-            {
-              path: "edit",
-              element: <NewCategory />,
+              // path: "edit",
+              element: <LazyNewCategory />,
             },
           ],
         },

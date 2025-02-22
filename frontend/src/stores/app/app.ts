@@ -1,5 +1,17 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-
+type Path = string;
+type Title = string;
+export const routesNames : {[key: Path] : Title} = {
+    '/dashboard': 'Dashboard',
+    '/dashboard/user': 'User',
+    '/dashboard/categories': 'Categories',
+    '/dashboard/products': 'Products List',
+    '/dashboard/orders': 'Orders',
+    '/dashboard/settings': 'Settings',
+    '/dashboard/categories/new': 'Create Category',
+    '/dashboard/products/new': 'Create Product',
+    '/dashboard/orders/new': 'Create Order',  
+}
 interface AppState {
     loading: boolean;
     toast: {

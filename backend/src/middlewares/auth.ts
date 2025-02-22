@@ -35,26 +35,28 @@ export const checkRole = (roles: string[]) => {
     }
   };
 };
-export const validateToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  const token = req.cookies.token;
-
-  if (!token) {
-    throw new ErrorGenerator(Errors.INVALID_TOKEN, "User");
-  }
-
+export const validateToken = async (req: Request & { user?: IUser<Types.ObjectId | string>}, res: Response, next: NextFunction): Promise<void> => {
+  const token = req.cookies?.token || undefined;
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as IUser<string>;
-    const user = await User.findById(decoded.id)
-    if(!user || user.email !== decoded.email || !isObjectIdOrHexString(decoded.role) || user.role != new Types.ObjectId(decoded.role)){
+    if (!token) {
       throw new ErrorGenerator(Errors.INVALID_TOKEN, "User");
     }
+    const decoded = jwt.verify(token, JWT_SECRET) as jwt.JwtPayload & IUser<Types.ObjectId | string>;
+    if(decoded.exp && Date.now() >= decoded.exp * 1000){
+      throw new ErrorGenerator(Errors.INVALID_TOKEN, "User");
+    }
+    const user = await User.findById(decoded.id)
+    if(!user || user.email != decoded.email || !isObjectIdOrHexString(decoded.role) || user.role?.toHexString() != decoded.role){
+      throw new ErrorGenerator(Errors.INVALID_PAYLOAD, "User");
+    }
+    req.user = user;
     next();
   } catch (error) {
+    clearTokenFromCookie(res);
     if(error instanceof ErrorGenerator){
-      clearTokenFromCookie(res);
       res.status(error.status).send({ error_type: error.type,message: error.message });
       return
     }
-    next(error)
+    res.status(401).send({ error_type: Errors.INVALID_TOKEN, message: 'Invalid token',error });
   }
 };

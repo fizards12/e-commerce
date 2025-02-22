@@ -2,11 +2,16 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { ICategory } from "../../schemas/category";
 import { createCategory, deleteCategory, getCategories, getCategory, updateCategory } from "../../services/products";
 import { call } from "../../services/call";
+import store, { RootState } from "..";
 
 export const fetchCategories = createAsyncThunk(
     'products/fetchCategories',
     async () => {
-      return await call(getCategories, []);
+      const state : RootState = store.getState();
+      if(Object.values(state.categories.data).length === 0){
+        return await call(getCategories, []);
+      }
+      return { categories: Object.values(state.categories.data) };
     }
   );
   

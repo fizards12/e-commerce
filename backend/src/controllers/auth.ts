@@ -2,12 +2,12 @@ import { Request, Response, NextFunction } from 'express';
 import { User } from '../models/user';
 import bcrypt from 'bcrypt';
 import { SALTS_ROUNDS } from '../env';
-import { RequestWithUser, UserWithRole, UserwithRoleId } from '../interfaces/user';
+import { IUser, RequestWithUser, UserWithRole, UserwithRoleId } from '../interfaces/user';
 import { Errors } from '../enum/errors';
 import { isObjectIdOrHexString, Types } from 'mongoose';
 import { generateToken, storeTokenInCookie, clearTokenFromCookie } from '../services/jwt';
 import { ErrorGenerator } from '../services/error';
-
+import jwt from "jsonwebtoken"
 export const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { name, email, password, address, phone, role } = req.body;
@@ -46,7 +46,7 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
     if (!isMatch) {
       throw new ErrorGenerator(Errors.INVALID_CREDENTIALS, "User");
     }
-    const token = generateToken({ id: user.id, email: user.email,role: user.role?.id || "" });
+    const token = generateToken({ id: user.id, email: user.email,role: user.role?.toHexString() || "" });
     storeTokenInCookie(token,res);
     res.status(200).send({ id: user.id });
   } catch (error) {
@@ -67,7 +67,7 @@ export const getProfile = async (req: RequestWithUser, res: Response, next: Next
     if (!user) {
       throw new ErrorGenerator(Errors.NOT_FOUND, "User");
     }
-    res.status(200).json(user.toJSON());
+    res.status(200).json({user: user.toJSON()});
   } catch (error) {
     if(error instanceof ErrorGenerator){
       res.status(error.status).send({ error_type: error.type, message: error.message });
@@ -83,3 +83,23 @@ export const logout = (req: Request, res: Response): void => {
 };
 
 
+
+export const getLoggedInUser = async (req: Request & {user?: IUser<Types.ObjectId | string>}, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    // Regenerate user token
+    // const user = req.user;
+    // if(user){
+    //   const token = generateToken({ id: user.id, email: user.email,role: user.role || "" });
+    //   storeTokenInCookie(token,res);
+    // }
+    res.status(200).send({ message: "Success" });
+    return
+  } catch (error) {
+    if(error instanceof ErrorGenerator){
+      res.status(error.status).send({ error_type: error.type, message: error.message });
+      return
+    }
+    let err = new ErrorGenerator(Errors.ERROR_FETCHING_DETAILS, "User",error);
+    next(err);
+  }
+};

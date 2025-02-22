@@ -1,7 +1,18 @@
 // Import the error handler
+import axios from 'axios';
 import store from '../stores';
 import { toggleLoading } from '../stores/app/app';
 import { handleError } from './error';
+
+const axiosInstacne = axios.create({
+    baseURL: import.meta.env.VITE_SERVER_URL,
+    withCredentials: true,
+    headers: {
+        'Content-Type': 'application/json'
+    }
+})
+
+export default axiosInstacne;
 
 // Define a general call function
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

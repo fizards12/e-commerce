@@ -63,7 +63,6 @@ export const updateCategory = async (req: RequestWithCategory & { params: { id: 
         let err : ErrorGenerator;
         if(error.code == 11000){
             let duplicateValues = Object.values((error as any).keyValue)[0] as string;
-            
             err = new ErrorGenerator(Errors.DUPLICATE_KEYS, "Category", error, duplicateValues);
             res.status(err.status).send({ error_type: err.type, message: err.message });
             return

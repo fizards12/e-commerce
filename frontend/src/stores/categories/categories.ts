@@ -23,7 +23,12 @@ interface ProductsState {
   const categoriesSlice = createSlice({
     name: 'categories',
     initialState,
-    reducers: {},
+    reducers: {
+      reset(state){
+        state.data = initialState.data;
+        state.length = initialState.length;
+      }
+    },
     extraReducers: (builder) => {
       builder
         .addCase(fetchCategories.fulfilled, (state,action: PayloadAction<{ categories: ICategory[] }>) => {
@@ -42,7 +47,7 @@ interface ProductsState {
         })
     },
   });
-  
+  export const { reset: resetCategories } = categoriesSlice.actions
   const persistedProductsReducer = persistReducer(persistConfig, categoriesSlice.reducer);
   
   export default persistedProductsReducer;

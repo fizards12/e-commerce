@@ -32,11 +32,6 @@ type StoreTypes = {
     'product': { [id: string] : IProduct}
 }
 
-type CollectionTypes = {
-    'category': ICategory[],
-    'product': IProduct[]
-}
-
 type DocType = 'category' | 'product';
 
 export const useFetchDoc = <T extends Doc[K], K extends DocType>(docType: K, id: string | undefined): [T | undefined, GeneralError | undefined] => {
@@ -61,7 +56,7 @@ export const useFetchDoc = <T extends Doc[K], K extends DocType>(docType: K, id:
     return [doc, error];
 }
 
-export const useFetchDocList = <T extends CollectionTypes[K], K extends DocType>(docType: K): [T | undefined, GeneralError | undefined] => {
+export const useFetchDocList = <T extends StoreTypes[K], K extends DocType>(docType: K): [T | undefined, GeneralError | undefined] => {
     const data = useSelector((state: RootState) => state[storePath[docType]].data as T);
     const dispatch = useDispatch<AppDispatch>();
     const [list, setList] = useState<T | undefined>(data);
@@ -70,7 +65,7 @@ export const useFetchDocList = <T extends CollectionTypes[K], K extends DocType>
         const action = docListFuncs[docType]();
         try {
             const result = await dispatch(action as any).unwrap();
-            setList(result);
+            setList(result[storePath[docType]]);
         } catch (error) {
             setError(error as GeneralError);
         }
@@ -80,5 +75,8 @@ export const useFetchDocList = <T extends CollectionTypes[K], K extends DocType>
             getList();
         }
     }, [])
+    useLayoutEffect(() => {
+        setList(data);
+    },[data])
     return [list, error];
 }

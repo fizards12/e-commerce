@@ -1,10 +1,6 @@
-import { Formik, Form, FormikHelpers } from "formik";
+import { Formik, Form } from "formik";
 import { NewProductSchema } from "../../../../schemas/validations/product";
 import Field from "../../../../components/atoms/Field/Field";
-import { AppDispatch } from "../../../../stores";
-import { useDispatch } from "react-redux";
-import { createProductThunk } from "../../../../stores/products/productsThunk";
-import { showToastThunk } from "../../../../stores/app/app";
 import { IProduct } from "../../../../schemas/product";
 import AutoComplete, {
   Option,
@@ -12,6 +8,9 @@ import AutoComplete, {
 import { useFetchDoc, useFetchDocList } from "../../../../Hooks/useFetchDoc";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { GeneralError } from "../../../../services/error";
+import { useMutateDoc } from "../../../../Hooks/useMutateDoc";
+import ImageUploader from "../../../../components/atoms/Field/FileInput";
 
 const initialValues: IProduct<string> = {
   name: "",
@@ -19,48 +18,40 @@ const initialValues: IProduct<string> = {
   price: 0,
   description: "",
   category: "",
+  img: undefined,
 };
 const NewProduct = () => {
   const { id } = useParams();
-  const dispatch = useDispatch<AppDispatch>();
-  const [p] = useFetchDoc('product', id);
+  const [p]: [IProduct<string> | undefined, GeneralError | undefined] =
+    useFetchDoc("product", id);
   const [product, setProduct] = useState<IProduct<string>>(initialValues);
-  const [categories] = useFetchDocList('category');
-  useEffect(()=>{
-    if(p && typeof p.category == 'object'){
-      setProduct({...p, category: p.category.id || ''});
+  const [categories] = useFetchDocList("category");
+  const { mutate: onSubmit } = useMutateDoc("product", id);
+  useEffect(() => {
+    if (p) {
+      setProduct({ ...p });
     }
-  },[p])
-  const onSubmit = async (
-    values: IProduct<string>,
-    { setSubmitting }: FormikHelpers<IProduct<string>>
-  ) => {
-    setSubmitting(true);
-    try {
-      await dispatch(createProductThunk(values)).unwrap();
-      dispatch(
-        showToastThunk({
-          type: "success",
-          message: "Product created successfully",
-          duration: 2000,
-        })
-      );
-    } finally {
-      setSubmitting(false);
-    }
-  };
+  }, [p]);
 
   return (
-    <div>
-      <h4>{p ? "Edit Product" : 'New Product'}</h4>
+    <div className="card">
       <Formik
-      enableReinitialize
+        enableReinitialize
         initialValues={product}
         validationSchema={NewProductSchema}
         onSubmit={onSubmit}
       >
-        {({ errors, touched, setFieldValue }) => (
+        {({ errors, touched, isSubmitting, setFieldValue, values }) => (
           <Form>
+            <ImageUploader
+              className="float-right"
+              label="Product Image"
+              setFieldValue={setFieldValue}
+              name="img"
+              error={errors.img}
+              touched={touched.img}
+              val={values.img}
+            />
             <div className="flex gap-2">
               <Field
                 error={errors.name}
@@ -86,32 +77,37 @@ const NewProduct = () => {
                 label="Price"
                 size="sm"
               />
-              <Field
-                error={errors.stock}
-                touched={touched.stock}
-                classes={{
-                  wrapperClass: "flex-1",
-                }}
-                type="number"
-                id="stock"
-                name="stock"
-                label="Stock"
-                size="sm"
-              />
             </div>
+            <Field
+              error={errors.stock}
+              touched={touched.stock}
+              classes={{
+                wrapperClass: "flex-1",
+              }}
+              type="number"
+              id="stock"
+              name="stock"
+              label="Stock"
+              size="sm"
+            />
             <div className="flex-col flex gap-1 items-start">
               <label htmlFor="category" className="label label-text">
                 Product Category
               </label>
               <AutoComplete
-                list={categories?.map((c) => ({id: c.id, name: c.name})) || []}
+                list={
+                  Object.values(categories || [])?.map((c) => ({
+                    id: c.id,
+                    name: c.name,
+                  })) || []
+                }
                 fieldDisplay="name"
-                val={product.category || ''}
+                val={product.category || ""}
                 name="category"
                 id="category"
-                onChange={(value: Option) =>
-                  setFieldValue("category", value?.id || "")
-                }
+                onChange={(value: Option) => {
+                  setFieldValue("category", value?.id || "");
+                }}
               />
               {errors.category && touched.category && (
                 <div className="text-red-500">{errors.category}</div>
@@ -127,7 +123,8 @@ const NewProduct = () => {
               size="sm"
             />
             <button className="mt-2 btn btn-primary" type="submit">
-              Create
+              {!id && (isSubmitting ? "Creating..." : "Create")}
+              {id && (isSubmitting ? "Updating..." : "Update")}
             </button>
           </Form>
         )}

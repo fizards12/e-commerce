@@ -4,23 +4,33 @@ import { CgProfile } from "react-icons/cg";
 import { RiProductHuntFill } from "react-icons/ri";
 import Wrapper from "../../../components/atoms/Wrapper/Wrapper";
 import { BiCategory } from "react-icons/bi";
+
 const routesLinks = [
   {
     path: "/dashboard/user",
-    name: "User",
+    name: "User Profile",
     Icon: CgProfile,
   },
   {
     path: "/dashboard/categories",
     name: "Categories",
     Icon: BiCategory,
+    submenu: [
+      { path: "/dashboard/categories", name: "All Categories" },
+      { path: "/dashboard/categories/new", name: "Create Category" },
+    ],
   },
   {
     path: "/dashboard/products",
     name: "Products",
     Icon: RiProductHuntFill,
+    submenu: [
+      { path: "/dashboard/products", name: "All Products" },
+      { path: "/dashboard/products/new", name: "Create Product" },
+    ],
   },
 ];
+
 const Sidebar = () => {
   return (
     <nav className="max-w-52 w-full h-full max-md:w-0">
@@ -50,12 +60,7 @@ const Sidebar = () => {
                 <div className="divider px-2"></div>
                 <ul className="menu w-full gap-1">
                   {routesLinks.map((route) => (
-                    <li key={route.path} className="w-full">
-                      <NavbarLink to={route.path}>
-                        {route.Icon && <route.Icon size={20} />}
-                        <span>{route.name}</span>
-                      </NavbarLink>
-                    </li>
+                    <MenuItem key={route.path} route={route} />
                   ))}
                 </ul>
               </div>
@@ -64,6 +69,35 @@ const Sidebar = () => {
         </div>
       </Wrapper>
     </nav>
+  );
+};
+
+function MenuItem({ route }: { route: (typeof routesLinks)[number] }){
+  return (
+    <li key={route.path} className="w-full">
+      {route.submenu ? (
+        <details>
+          <summary className=" rounded-lg mb-2">
+            {route.Icon && <route.Icon size={20} />}
+            <span className="ml-2">{route.name}</span>
+          </summary>
+          <ul className="flex flex-col gap-1">
+            {route.submenu.map((subItem) => (
+              <li key={subItem.path}>
+                <NavbarLink end to={subItem.path}>
+                  <span>{subItem.name}</span>
+                </NavbarLink>
+              </li>
+            ))}
+          </ul>
+        </details>
+      ) : (
+        <NavbarLink to={route.path}>
+          {route.Icon && <route.Icon size={20} />}
+          <span>{route.name}</span>
+        </NavbarLink>
+      )}
+    </li>
   );
 };
 

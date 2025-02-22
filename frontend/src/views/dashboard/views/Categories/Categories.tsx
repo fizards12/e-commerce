@@ -18,7 +18,7 @@ const deleteCategory = (dispatch: AppDispatch, id: string) => async () => {
   );
 };
 
-const columns = (dispatch: AppDispatch) : ColumnProps<ICategory>[] => [
+const columns = (dispatch: AppDispatch): ColumnProps<ICategory>[] => [
   {
     field: "name",
     label: "Category Name",
@@ -41,15 +41,17 @@ const columns = (dispatch: AppDispatch) : ColumnProps<ICategory>[] => [
         </button>
       </div>
     ),
-  }
+  },
 ];
 const Categories = () => {
-  const [categories] = useFetchDocList('category');
+  const [categories] = useFetchDocList("category");
   const dispatch = useDispatch<AppDispatch>();
   return (
-    <div className="flex-1">
-      <h4>Categories</h4>
-      <Table data={categories} columns={columns(dispatch)} />
+    <div className="card">
+      <Table
+        data={Object.values(categories || {})}
+        columns={columns(dispatch)}
+      />
     </div>
   );
 };

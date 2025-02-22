@@ -3,11 +3,14 @@ import Wrapper from "../../../components/atoms/Wrapper/Wrapper";
 import { logoutThunk } from "../../../stores/auth/authThunks";
 import { AppDispatch } from "../../../stores";
 import { BiMenu } from "react-icons/bi";
+import { useLocation } from "react-router-dom";
+import { routesNames } from "../../../stores/app/app";
 
 function Header() {
+  const location = useLocation();
   const dispatcher = useDispatch<AppDispatch>();
   return (
-    <Wrapper>
+    <Wrapper className="h-auto">
       <header className="w-full flex justify-between">
         <div className="flex gap-2 items-center">
           <div className="drawer-content md:hidden">
@@ -18,7 +21,7 @@ function Header() {
               <BiMenu size={25} />
             </label>
           </div>
-          <h4 className="uppercase">DaisyUI</h4>
+          <h4>{routesNames[location.pathname]}</h4>
         </div>
         <div className="flex items-center">
           <button

@@ -22,8 +22,7 @@ const NewCategory = () => {
   const { mutate : onSubmit } = useMutateDoc('category', id);
 
   return (
-    <div>
-      <h4>{id? "Update Category" : 'New Category'}</h4>
+    <div className="card">
       <Formik
         initialValues={category}
         enableReinitialize

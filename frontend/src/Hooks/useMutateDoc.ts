@@ -39,7 +39,7 @@ const mutateFuncs: { [docType in DocType]: { [action in MutateTypes]: MutateFunc
 
 type Doc = {
     'category': ICategory,
-    'product': IProduct
+    'product': IProduct<string>
 }
 type DocType = 'category' | 'product';
 

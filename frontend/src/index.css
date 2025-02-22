@@ -37,6 +37,9 @@
   .label-text-alt-sm{
     @apply text-xs;
   }
+  .card {
+    @apply shadow-lg bg-white p-4
+  }
 }
 
 
@@ -74,4 +77,35 @@ h6 {
   font-size: 1rem;
   font-weight: bold;
   color: #888;
+}
+
+
+/* Custom scrollbar for all scrollable elements */
+::-webkit-scrollbar {
+  width: 12px; /* Standard width */
+  height: 12px; /* For horizontal scrollbars */
+}
+
+/* Scrollbar track (background) */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Light gray */
+  border-radius: 10px;
+}
+
+/* Scrollbar thumb (draggable part) */
+::-webkit-scrollbar-thumb {
+  background: #888; /* Medium gray */
+  border-radius: 10px;
+  border: 3px solid #f1f1f1; /* Creates padding effect */
+}
+
+/* Hover effect on scrollbar thumb */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Darker gray on hover */
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin; /* Makes it thinner */
+  scrollbar-color: #888 #f1f1f1; /* thumb color + track color */
 }

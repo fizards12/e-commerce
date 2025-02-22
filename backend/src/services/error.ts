@@ -1,11 +1,11 @@
 import { Errors } from '../enum/errors';
 
 export class ErrorGenerator {
-    message?: string;
+    message?: string | null;
     status: number;
-    type?: string;
-    error?: unknown;
-    constructor(errType: string,dataType: string,error?: unknown,key?: string) {
+    type?: string | null;
+    error?: unknown | null;
+    constructor(errType?: string | null,dataType?: string | null,error?: unknown,key?: string) {
         this.message = "SomeThing went wrong!";
         this.type = errType;
         this.status = 500;
@@ -13,7 +13,7 @@ export class ErrorGenerator {
         this.error = error || null
     }
 
-    generateError(errType: string, dataType: string,key?:string) {
+    generateError(errType?: string | null, dataType?: string | null,key?:string) {
         switch (errType) {
             case Errors.ALREADY_EXISTS:
                 this.message = `${dataType} already exists.`;
@@ -66,6 +66,10 @@ export class ErrorGenerator {
                 break;
             case Errors.INVALID_TOKEN:
                 this.message = `Invalid token provided.`;
+                this.status = 401;
+                break;
+            case Errors.INVALID_PAYLOAD:
+                this.message = `Invalid token payload.`;
                 this.status = 401;
                 break;
             case Errors.FORBIDDEN:

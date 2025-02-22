@@ -5,6 +5,7 @@ export interface IProduct<T= string | ICategory> {
     name: string;
     description: string;
     price: number;
+    img?: File | string;
     stock: number;
     category: T;
     createdAt?: Date;
