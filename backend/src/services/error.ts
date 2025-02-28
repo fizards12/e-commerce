@@ -5,15 +5,15 @@ export class ErrorGenerator {
     status: number;
     type?: string | null;
     error?: unknown | null;
-    constructor(errType?: string | null,dataType?: string | null,error?: unknown,key?: string) {
+    constructor(errType?: string | null, dataType?: string | null, error?: unknown) {
         this.message = "SomeThing went wrong!";
         this.type = errType;
         this.status = 500;
-        this.generateError(errType,dataType,key);
         this.error = error || null
+        this.generateError(errType, dataType);
     }
 
-    generateError(errType?: string | null, dataType?: string | null,key?:string) {
+    generateError(errType?: string | null, dataType?: string | null) {
         switch (errType) {
             case Errors.ALREADY_EXISTS:
                 this.message = `${dataType} already exists.`;
@@ -60,8 +60,8 @@ export class ErrorGenerator {
                 this.status = 400;
                 break;
             case Errors.DUPLICATE_KEYS:
-                
-                this.message = `${key} Duplicate in ${dataType}.`;
+                let duplicateValues = Object.values((this.error as any).keyValue)[0] as string;
+                this.message = `${duplicateValues} Duplicate in ${dataType}.`;
                 this.status = 400;
                 break;
             case Errors.INVALID_TOKEN:

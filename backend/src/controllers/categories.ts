@@ -20,7 +20,7 @@ export const createCategory = async (req: RequestWithCategory, res: Response, ne
     } catch (error) {
         let err = new ErrorGenerator(Errors.ERROR_CREATING, "Category", error);
         if((error as any).code === 11000){
-             err = new ErrorGenerator(Errors.DUPLICATE_KEYS, "Category");
+             err = new ErrorGenerator(Errors.DUPLICATE_KEYS, "Category",error);
              res.status(err.status).send({ error_type: err.type, message: err.message });
              return;
         }
@@ -62,8 +62,7 @@ export const updateCategory = async (req: RequestWithCategory & { params: { id: 
         }
         let err : ErrorGenerator;
         if(error.code == 11000){
-            let duplicateValues = Object.values((error as any).keyValue)[0] as string;
-            err = new ErrorGenerator(Errors.DUPLICATE_KEYS, "Category", error, duplicateValues);
+            err = new ErrorGenerator(Errors.DUPLICATE_KEYS, "Category", error);
             res.status(err.status).send({ error_type: err.type, message: err.message });
             return
         }

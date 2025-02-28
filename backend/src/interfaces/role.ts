@@ -1,6 +1,5 @@
-import { Document, Schema } from "mongoose";
 
-export interface IRole extends Document {
+export interface IRole {
     id?: string;
     __v?: number;
     name: string;

@@ -1,4 +1,4 @@
-import { Document, Schema, model } from 'mongoose';
+import { Document, Schema, Types, model } from 'mongoose';
 import { ICategory } from '../interfaces/category';
 
 const categorySchema = new Schema<ICategory>({
@@ -8,8 +8,8 @@ const categorySchema = new Schema<ICategory>({
   updatedAt: { type: Date, default: Date.now }
 });
 
-const transform = (doc: Document, ret: Partial<ICategory>): Partial<ICategory> => {
-  ret.id = (ret._id as Schema.Types.ObjectId).toString();
+const transform = (doc: Document, ret: Partial<ICategory & {_id?:Types.ObjectId}>): Partial<ICategory & {_id?:Types.ObjectId}> => {
+  ret.id = (ret._id as Types.ObjectId).toString();
   delete ret._id;
   delete ret.__v;
   return ret;

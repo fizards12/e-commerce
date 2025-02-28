@@ -25,7 +25,11 @@ export const createProduct = async (req: RequestWithProduct, res: Response, next
         newProduct = await newProduct.save();
         res.status(201).send({ message: 'Product created successfully', product: newProduct?.toJSON() });
     } catch (error) {
-        console.log(error)
+        if((error as any).code === 11000){
+            let err = new ErrorGenerator(Errors.DUPLICATE_KEYS, "Product", error);
+            res.status(err.status).send({ error_type: err.type, message: err.message });
+            return;
+        }
         if(error instanceof ErrorGenerator){
             res.status(error.status).send({ error_type: error.type, message: error.message,error: error.error });
             return;

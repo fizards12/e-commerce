@@ -1,4 +1,4 @@
-import { Document, Schema, model } from 'mongoose';
+import { Document, Schema, Types, model } from 'mongoose';
 import { IRole } from '../interfaces/role';
 
 const roleSchema = new Schema<IRole>({
@@ -8,8 +8,8 @@ const roleSchema = new Schema<IRole>({
   updatedAt: { type: Date, default: Date.now }
 });
 
-const transform = (doc: Document, ret: Partial<IRole>): Partial<IRole> => {
-  ret.id = (ret._id as Schema.Types.ObjectId).toString();
+const transform = (doc: Document, ret: Partial<IRole & {_id?:Types.ObjectId}>): Partial<IRole & {_id?:Types.ObjectId}> => {
+  ret.id = (ret._id as Types.ObjectId).toString();
   delete ret._id;
   delete ret.__v;
   return ret;

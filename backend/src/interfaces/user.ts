@@ -2,7 +2,7 @@ import { Document, Types } from "mongoose";
 import { IRole } from "./role";
 import { Request } from "express";
 
-export interface IUser<T> extends Document {
+export interface IUser<T = Types.ObjectId> {
   id: string;
   __v?: number
   name: string;

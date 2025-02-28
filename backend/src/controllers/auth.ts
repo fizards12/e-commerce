@@ -22,7 +22,7 @@ export const register = async (req: Request, res: Response, next: NextFunction):
     res.status(201).json({ message: 'User registered successfully' });
   } catch (error : any) {
     if (error.code === 11000) {
-      let err = new ErrorGenerator(Errors.DUPLICATE_KEYS, "User");
+      let err = new ErrorGenerator(Errors.DUPLICATE_KEYS, "User",error);
       res.status(err.status).send({ error_type: err.type, message: 'This email is already registered' });
       return;
     }
@@ -63,7 +63,7 @@ export const getProfile = async (req: RequestWithUser, res: Response, next: Next
     if (!req.body.id || !isObjectIdOrHexString(req.body.id)) {
       throw new ErrorGenerator(Errors.INVALID_ID, "User");
     }
-    const user = await User.findById(req.body.id).populate('role') as UserWithRole;
+    const user = await User.findById(req.body.id).populate('role');
     if (!user) {
       throw new ErrorGenerator(Errors.NOT_FOUND, "User");
     }

@@ -1,11 +1,12 @@
-import { Document, Types } from 'mongoose';
+import { Types } from 'mongoose';
 import { ICategory } from './category';
 import { Request } from 'express';
 
-export interface IProduct<T> extends Document {
+export interface IProduct<T> {
     id?: string;
     __v?: number;
     name?: string;
+    user: Types.ObjectId | string; 
     img?: string;
     description?: string;
     price?: number;

@@ -16,7 +16,7 @@ export const createRole = async (
   } catch (error: any) {
     let err : ErrorGenerator
     if(error.code === 11000) {
-      err = new ErrorGenerator(Errors.DUPLICATE_KEYS, "Role");
+      err = new ErrorGenerator(Errors.DUPLICATE_KEYS, "Role",error);
     }else {
       err = new ErrorGenerator(Errors.ERROR_CREATING, "Role",error);
     }

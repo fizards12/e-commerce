@@ -13,7 +13,7 @@ const userSchema = new Schema<IUser<Types.ObjectId>>({
 });
 
 // Define a typed transform function
-function transform(doc: Document, ret: Partial<UserwithRoleId>): Partial<UserwithRoleId> {
+function transform(doc: Document, ret: Partial<UserwithRoleId & {_id?:Types.ObjectId}>): Partial<UserwithRoleId & {_id?:Types.ObjectId}> {
   ret.id = (ret._id as Types.ObjectId).toString();
   delete ret.createdAt;
   delete ret.updatedAt;
