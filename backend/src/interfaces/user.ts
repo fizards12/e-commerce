@@ -3,7 +3,8 @@ import { IRole } from "./role";
 import { Request } from "express";
 
 export interface IUser<T = Types.ObjectId> {
-  id: string;
+  id?: string;
+  _id?: Types.ObjectId;
   __v?: number
   name: string;
   email: string;

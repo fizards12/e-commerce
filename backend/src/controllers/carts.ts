@@ -1,26 +1,34 @@
 import { Request, Response } from 'express';
 import { Cart } from '../models/cart';
 import { CartItem } from '../models/cartItem';
-
-// Create a new cart
-export const createCart = async (req: Request, res: Response) => {
-    try {
-        const cart = new Cart(req.body);
-        await cart.save();
-        res.status(201).send({ message: 'Cart created successfully', cart });
-    } catch (error) {
-        res.status(400).send({ message: 'Error creating cart', error });
+import { CartInterface, CartItemInterface } from '../interfaces/cart';
+import { IUser } from '../interfaces/user';
+import { ErrorGenerator } from '../services/error';
+import { Errors } from '../enum/errors';
+export interface RequestWithData<T> extends Request {
+    body: Request['body'] & {
+        data?: T
     }
-};
+}
+
+let populate = {
+    path: 'items',
+    populate: {
+        path: 'product',
+        select: 'name price img'
+    }
+}
 
 // Get cart details by ID
 export const getCart = async (req: Request, res: Response) => {
     try {
-        const cart = await Cart.findById(req.params.id).populate('cartItems');
+        const cart = await Cart.findById(req.params.id).populate(populate);
         if (!cart) {
-            return res.status(404).send({ message: 'Cart not found' });
+            res.status(404).send({ message: 'Cart not found' });
+            return
         }
         res.status(200).send({ message: 'Cart details', cart });
+        return
     } catch (error) {
         res.status(400).send({ message: 'Error fetching cart', error });
     }
@@ -31,7 +39,8 @@ export const updateCart = async (req: Request, res: Response) => {
     try {
         const cart = await Cart.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!cart) {
-            return res.status(404).send({ message: 'Cart not found' });
+            res.status(404).send({ message: 'Cart not found' });
+            return
         }
         res.status(200).send({ message: 'Cart updated successfully', cart });
     } catch (error) {
@@ -44,7 +53,8 @@ export const deleteCart = async (req: Request, res: Response) => {
     try {
         const cart = await Cart.findByIdAndDelete(req.params.id);
         if (!cart) {
-            return res.status(404).send({ message: 'Cart not found' });
+            res.status(404).send({ message: 'Cart not found' });
+            return
         }
         res.status(200).send({ message: 'Cart deleted successfully' });
     } catch (error) {
@@ -52,47 +62,49 @@ export const deleteCart = async (req: Request, res: Response) => {
     }
 };
 
-// Get multiple carts
-export const getCarts = async (req: Request, res: Response) => {
-    try {
-        const carts = await Cart.find().populate('cartItems');
-        res.status(200).send({ message: 'List of carts', carts });
-    } catch (error) {
-        res.status(400).send({ message: 'Error fetching carts', error });
-    }
-};
-
 // Add a cart item
-export const addCartItem = async (req: Request, res: Response) => {
+export const updateItem = async (req: RequestWithData<CartItemInterface> & { user: IUser }, res: Response) => {
     try {
-        const cart = await Cart.findOne({ user: req.body.user });
+        // find user cart and if not exists create one 
+        let cart = await Cart.findOne({ user: req.user._id });
         if (!cart) {
-            return res.status(404).send({ message: 'Cart not found' });
+            cart = new Cart({ user: req.user._id, items: [],total_amount: 0 });
         }
-        const cartItem = new CartItem(req.body.cartItem);
-        await cartItem.save();
-        cart.cartItems.push(cartItem._id);
+        // initialize quantity
+        let quantity = 1;
+        // get item data from request
+        let { data } = req.body;
+
+        // check if quantity is provided
+        if (data.quantity != 0 && data.quantity) {
+            quantity = data.quantity;
+        }
+        // check if cart item already exist
+        let cartItem = await CartItem.findOne({ user: req.user._id, product: data.product });
+        // if item not exists create a new one
+        if (!cartItem) {
+            cartItem = new CartItem({
+                user: req.user._id,
+                ...data
+            });
+        } else {
+            // if item exists update quantity
+            cartItem.quantity = quantity;
+        }
+        if(cartItem.quantity == 0){
+            await CartItem.findByIdAndDelete(cartItem._id);
+        }else{
+            await cartItem.save();
+        }
+        // find item on cart and if not exists add it
+        await cart.populate(populate);
+        const cartItemIndex = cart.items.findIndex((item) => item.product === cartItem.product.toString());
+        
         await cart.save();
-        res.status(201).send({ message: 'Cart item added successfully', cart });
+        res.status(200).send({ message: 'Cart item added successfully', cart });
     } catch (error) {
-        res.status(400).send({ message: 'Error adding cart item', error });
     }
 };
-
-// Create cart if not created for a user
-export const createCartIfNotExists = async (req: Request, res: Response) => {
-    try {
-        let cart = await Cart.findOne({ user: req.body.user });
-        if (!cart) {
-            cart = new Cart({ user: req.body.user, cartItems: [] });
-            await cart.save();
-        }
-        res.status(200).send({ message: 'Cart retrieved or created successfully', cart });
-    } catch (error) {
-        res.status(400).send({ message: 'Error creating or retrieving cart', error });
-    }
-};
-
 // Delete a cart item
 export const deleteCartItem = async (req: Request, res: Response) => {
     try {
@@ -100,9 +112,9 @@ export const deleteCartItem = async (req: Request, res: Response) => {
         if (!cart) {
             return res.status(404).send({ message: 'Cart not found' });
         }
-        const cartItemIndex = cart.cartItems.indexOf(req.params.itemId);
+        const cartItemIndex = cart.items.indexOf(req.params.itemId);
         if (cartItemIndex > -1) {
-            cart.cartItems.splice(cartItemIndex, 1);
+            cart.items.splice(cartItemIndex, 1);
             await CartItem.findByIdAndDelete(req.params.itemId);
             await cart.save();
             res.status(200).send({ message: 'Cart item deleted successfully', cart });

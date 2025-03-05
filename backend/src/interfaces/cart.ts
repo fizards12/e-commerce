@@ -15,7 +15,7 @@ export interface CartInterface<T = IUser<Types.ObjectId>> {
     id?: string;
     __v?: number;
     user: T;
-    cartItems: (CartItemInterface | Types.ObjectId | string)[];
+    items: (CartItemInterface | Types.ObjectId | string)[];
     total_amount: number;
     createdAt: Date;
     updatedAt: Date;

@@ -3,7 +3,7 @@ import { CartInterface } from '../interfaces/cart';
 
 const cartSchema = new Schema<CartInterface>({
   user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-  cartItems: [{ type: Schema.Types.ObjectId, ref: 'CartItem', required: true }],
+  items: [{ type: Schema.Types.ObjectId, ref: 'CartItem', required: true }],
   total_amount: { type: Number, default: 0 },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
