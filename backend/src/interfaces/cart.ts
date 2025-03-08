@@ -6,6 +6,7 @@ export interface CartItemInterface<T = string | Types.ObjectId | IProduct<Types.
     id?: string;
     __v?: number;
     product: T;
+    cart?: Types.ObjectId | string;
     quantity: number;
     createdAt?: Date;
     updatedAt?: Date;
@@ -14,8 +15,8 @@ export interface CartItemInterface<T = string | Types.ObjectId | IProduct<Types.
 export interface CartInterface<T = IUser<Types.ObjectId>> {
     id?: string;
     __v?: number;
+    items?: CartItemInterface<T>[];
     user: T;
-    items: (CartItemInterface | Types.ObjectId | string)[];
     total_amount: number;
     createdAt: Date;
     updatedAt: Date;

@@ -1,30 +1,22 @@
 import { Request, Response } from 'express';
-import { Cart } from '../models/cart';
+import { Cart, populate } from '../models/cart';
 import { CartItem } from '../models/cartItem';
 import { CartInterface, CartItemInterface } from '../interfaces/cart';
 import { IUser } from '../interfaces/user';
-import { ErrorGenerator } from '../services/error';
-import { Errors } from '../enum/errors';
+import { IProduct } from '../interfaces/product';
 export interface RequestWithData<T> extends Request {
-    body: Request['body'] & {
-        data?: T
-    }
-}
-
-let populate = {
-    path: 'items',
-    populate: {
-        path: 'product',
-        select: 'name price img'
+    body: {
+        data: T
     }
 }
 
 // Get cart details by ID
-export const getCart = async (req: Request, res: Response) => {
+export const getCart = async (req: Request & { user: IUser }, res: Response) => {
     try {
-        const cart = await Cart.findById(req.params.id).populate(populate);
+        const cart = await Cart.findOne({user: req.user.id}).populate<CartItemInterface<IProduct>>(populate);
         if (!cart) {
-            res.status(404).send({ message: 'Cart not found' });
+            // send status 204 to notify user that the cart not found without throwing error.
+            res.status(204).send({ message: 'Cart not found' });
             return
         }
         res.status(200).send({ message: 'Cart details', cart });
@@ -34,73 +26,51 @@ export const getCart = async (req: Request, res: Response) => {
     }
 };
 
-// Update cart information by ID
-export const updateCart = async (req: Request, res: Response) => {
-    try {
-        const cart = await Cart.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        if (!cart) {
-            res.status(404).send({ message: 'Cart not found' });
-            return
-        }
-        res.status(200).send({ message: 'Cart updated successfully', cart });
-    } catch (error) {
-        res.status(400).send({ message: 'Error updating cart', error });
-    }
-};
-
-// Delete a cart by ID
-export const deleteCart = async (req: Request, res: Response) => {
-    try {
-        const cart = await Cart.findByIdAndDelete(req.params.id);
-        if (!cart) {
-            res.status(404).send({ message: 'Cart not found' });
-            return
-        }
-        res.status(200).send({ message: 'Cart deleted successfully' });
-    } catch (error) {
-        res.status(400).send({ message: 'Error deleting cart', error });
-    }
-};
-
 // Add a cart item
-export const updateItem = async (req: RequestWithData<CartItemInterface> & { user: IUser }, res: Response) => {
+export const updateItem = async (req: RequestWithData<CartItemInterface<string>> & { user: IUser }, res: Response) => {
+    /**
+     * Request
+        * Body
+            * count: number
+        * Params
+            * id: string
+     */
     try {
-        // find user cart and if not exists create one 
-        let cart = await Cart.findOne({ user: req.user._id });
-        if (!cart) {
-            cart = new Cart({ user: req.user._id, items: [],total_amount: 0 });
-        }
         // initialize quantity
         let quantity = 1;
         // get item data from request
-        let { data } = req.body;
+        const { data } = req.body;
 
         // check if quantity is provided
         if (data.quantity != 0 && data.quantity) {
             quantity = data.quantity;
         }
+        // if quantity is 0 delete item
+        if (quantity == 0) {
+            await CartItem.findOneAndDelete({_id: data.id});
+            res.status(200).send({ message: 'Cart item deleted successfully' });
+            return;
+        }
+
         // check if cart item already exist
         let cartItem = await CartItem.findOne({ user: req.user._id, product: data.product });
         // if item not exists create a new one
         if (!cartItem) {
             cartItem = new CartItem({
-                user: req.user._id,
-                ...data
+                ...data,
+                quantity
             });
         } else {
             // if item exists update quantity
             cartItem.quantity = quantity;
         }
-        if(cartItem.quantity == 0){
-            await CartItem.findByIdAndDelete(cartItem._id);
-        }else{
-            await cartItem.save();
+        // find user cart and if not exists create one 
+        let cart = await Cart.findOne({ user: req.user._id });
+        if (!cart) {
+            cart = new Cart({ user: req.user._id });
+            await cart.save();
         }
-        // find item on cart and if not exists add it
-        await cart.populate(populate);
-        const cartItemIndex = cart.items.findIndex((item) => item.product === cartItem.product.toString());
-        
-        await cart.save();
+        await cartItem.save();
         res.status(200).send({ message: 'Cart item added successfully', cart });
     } catch (error) {
     }
@@ -108,7 +78,7 @@ export const updateItem = async (req: RequestWithData<CartItemInterface> & { use
 // Delete a cart item
 export const deleteCartItem = async (req: Request, res: Response) => {
     try {
-        const cart = await Cart.findOne({ user: req.body.user });
+        const cart = await CartItem.findOneAndDelete({ cart: req.params.id });
         if (!cart) {
             return res.status(404).send({ message: 'Cart not found' });
         }

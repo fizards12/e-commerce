@@ -2,7 +2,7 @@ import { Types } from 'mongoose';
 import { ICategory } from './category';
 import { Request } from 'express';
 
-export interface IProduct<T> {
+export interface IProduct<T = Types.ObjectId> {
     id?: string;
     __v?: number;
     name?: string;

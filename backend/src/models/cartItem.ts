@@ -1,14 +1,66 @@
-import { Schema, Types, model } from 'mongoose';
+import { Schema, Types, model, startSession } from 'mongoose';
 import { CartItemInterface } from '../interfaces/cart';
 import { Document } from 'mongoose';
+import { Cart } from './cart';
 
-const cartItemSchema = new Schema({
+const cartItemSchema = new Schema<CartItemInterface<Types.ObjectId>>({
   product: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
   quantity: { type: Number, required: true, min: 1 },
+  cart: { type: Schema.Types.ObjectId, ref: 'Cart', required: true },
   // ...existing code...
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });
+
+// post save hook
+// Update cart total after CartItem is saved (created or updated)
+cartItemSchema.post('save', async function (doc) {
+  const cartId = doc.cart;
+  const newSession = await startSession();
+  newSession.startTransaction();  
+  try {
+    // Calculate new total using aggregation
+    const result = await CartItem.aggregate([
+      { $match: { cart: cartId } },
+      { $group: { _id: null, total: { $sum: { $multiply: ['$quantity', '$price'] } } }}
+    ]).session(newSession);
+
+    const total = result[0]?.total || 0;
+
+    // Update cart's total
+    await Cart.findByIdAndUpdate(cartId, { total }, { session: newSession });
+    await newSession.commitTransaction();
+  } catch (error) {
+    await newSession.abortTransaction();
+    throw error;
+  } finally {
+    newSession.endSession();
+  }
+});
+
+// Update cart total after CartItem is removed
+cartItemSchema.post('findOneAndDelete', async function (doc?: CartItemInterface<Types.ObjectId>) {
+  if(!doc) return;
+  const cartId = doc.cart;
+  const session = await startSession();
+  session.startTransaction();
+  try {
+    const result = await CartItem.aggregate<{total?: number}>([
+      { $match: { cart: cartId } },
+      { $group: { _id: null, total: { $sum: { $multiply: ['$quantity', '$price'] } } } }
+    ]).session(session);
+
+    const total = result[0]?.total || 0;
+    await Cart.findByIdAndUpdate(cartId, { total }, { session });
+    await session.commitTransaction();
+  } catch (error) {
+    await session.abortTransaction();
+    throw error;
+  } finally {
+    session.endSession();
+  }
+});
+
 
 function transform(doc: Document, ret: Partial<CartItemInterface & {_id?:Types.ObjectId}>): Partial<CartItemInterface & {_id?:Types.ObjectId}> {
   ret.id = (ret._id as Types.ObjectId).toString();
