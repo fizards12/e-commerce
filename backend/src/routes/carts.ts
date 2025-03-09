@@ -1,17 +1,18 @@
 import express from 'express';
-import { getCart, updateCart, deleteCart } from '../controllers/carts';
+import { getCart, updateItem, deleteCartItem } from '../controllers/carts';
+import { validateToken } from '../middlewares/auth';
 
 const router = express.Router();
 
 
-// Get cart details by ID
-router.get('/:id', getCart);
+// Get cart details
+router.get('/',validateToken, getCart);
 
-// Update cart information by ID
-router.put('/:id', updateCart);
+// Update cart item information
+router.post('/',validateToken,updateItem);
 
-// Delete a cart by ID
-router.delete('/:id', deleteCart);
+// Delete a cart item by product ID
+router.delete('/:id',validateToken,deleteCartItem);
 
 
 export default router;

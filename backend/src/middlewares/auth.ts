@@ -9,6 +9,8 @@ import { JWT_SECRET } from '../env';
 import { clearTokenFromCookie } from '../services/jwt';
 import { ErrorGenerator } from '../services/error';
 
+export interface AuthenticatedRequest extends Request { user?: IUser };
+
 export const checkRole = (roles: string[]) => {
   return async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {

@@ -2,96 +2,102 @@ import { Request, Response } from 'express';
 import { Cart, populate } from '../models/cart';
 import { CartItem } from '../models/cartItem';
 import { CartInterface, CartItemInterface } from '../interfaces/cart';
-import { IUser } from '../interfaces/user';
 import { IProduct } from '../interfaces/product';
-export interface RequestWithData<T> extends Request {
+import { ErrorGenerator } from '../services/error';
+import { Errors } from '../enum/errors';
+import { AuthenticatedRequest } from '../middlewares/auth';
+import { isObjectIdOrHexString } from 'mongoose';
+export interface RequestWithData<T> extends AuthenticatedRequest {
     body: {
         data: T
     }
 }
 
+
 // Get cart details by ID
-export const getCart = async (req: Request & { user: IUser }, res: Response) => {
+export const getCart = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const cart = await Cart.findOne({user: req.user.id}).populate<CartItemInterface<IProduct>>(populate);
+        const cart = await Cart.findOne({ user: req.user?.id }).populate<CartItemInterface<IProduct>>(populate);
         if (!cart) {
             // send status 204 to notify user that the cart not found without throwing error.
             res.status(204).send({ message: 'Cart not found' });
-            return
+            
         }
-        res.status(200).send({ message: 'Cart details', cart });
-        return
+        res.status(200).send({ message: 'Cart details', cart: cart?.toJSON()});
     } catch (error) {
         res.status(400).send({ message: 'Error fetching cart', error });
     }
 };
 
 // Add a cart item
-export const updateItem = async (req: RequestWithData<CartItemInterface<string>> & { user: IUser }, res: Response) => {
+export const updateItem = async (req: RequestWithData<CartItemInterface<string>>, res: Response) => {
     /**
      * Request
         * Body
-            * count: number
+            * data: New Cart Item Data
         * Params
             * id: string
      */
     try {
-        // initialize quantity
-        let quantity = 1;
+        // find user cart and if not exists create one 
+        let cart = await Cart.findOne({ user: req.user?._id });
+
         // get item data from request
         const { data } = req.body;
 
-        // check if quantity is provided
-        if (data.quantity != 0 && data.quantity) {
-            quantity = data.quantity;
-        }
-        // if quantity is 0 delete item
-        if (quantity == 0) {
-            await CartItem.findOneAndDelete({_id: data.id});
-            res.status(200).send({ message: 'Cart item deleted successfully' });
-            return;
-        }
+        // check if product id is provided and valid id.
+        let productId = data?.product;
+        if(!productId || !isObjectIdOrHexString(productId)) 
+            throw new ErrorGenerator(Errors.INVALID_ID, "CartItem");
 
-        // check if cart item already exist
-        let cartItem = await CartItem.findOne({ user: req.user._id, product: data.product });
-        // if item not exists create a new one
-        if (!cartItem) {
-            cartItem = new CartItem({
-                ...data,
-                quantity
-            });
-        } else {
-            // if item exists update quantity
-            cartItem.quantity = quantity;
+        // check if quantity equal zero to delete cart item.
+        if (data?.quantity == 0) {
+            await CartItem.findOneAndDelete({ product: data.product });
+        }else{
+            // check if cart item already exist
+            let cartItem = await CartItem.findOne({ product: data.product });
+            // if item not exists create a new one
+            if (!cartItem) {
+                // if not exists create a new cart
+                if (!cart) {
+                    cart = new Cart({ user: req.user?._id });
+                    await cart.save();
+                }
+                cartItem = new CartItem({
+                    product: data.product,
+                    quantity: data.quantity || 1,
+                    cart: cart._id
+                });
+            } else {
+                // if item exists update quantity
+                cartItem.quantity = data.quantity || 1;
+            }
+            // save updates
+            await cartItem.save();
         }
-        // find user cart and if not exists create one 
-        let cart = await Cart.findOne({ user: req.user._id });
-        if (!cart) {
-            cart = new Cart({ user: req.user._id });
-            await cart.save();
-        }
-        await cartItem.save();
-        res.status(200).send({ message: 'Cart item added successfully', cart });
+        
+        cart = await Cart.findOne({ user: req.user?._id }).populate<CartItemInterface<IProduct>[]>(populate);
+        res.status(200).send({ message: 'Cart Updated successfully', cart: cart?.toJSON() });
     } catch (error) {
+        const err = new ErrorGenerator(Errors.ERROR_UPDATING, "Cart", error);
+        res.status(err.status).send({ error_type: err.type, message: err.message,error: err.error });
     }
 };
 // Delete a cart item
-export const deleteCartItem = async (req: Request, res: Response) => {
+export const deleteCartItem = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const cart = await CartItem.findOneAndDelete({ cart: req.params.id });
+        await CartItem.findOneAndDelete({ _id: req.params.id });
+        const cart = await Cart.findOne({ user: req.user?.id }).populate<CartItemInterface<IProduct>>(populate);
         if (!cart) {
-            return res.status(404).send({ message: 'Cart not found' });
+            throw new ErrorGenerator(Errors.NOT_FOUND, "Cart");
         }
-        const cartItemIndex = cart.items.indexOf(req.params.itemId);
-        if (cartItemIndex > -1) {
-            cart.items.splice(cartItemIndex, 1);
-            await CartItem.findByIdAndDelete(req.params.itemId);
-            await cart.save();
-            res.status(200).send({ message: 'Cart item deleted successfully', cart });
-        } else {
-            res.status(404).send({ message: 'Cart item not found' });
-        }
+        res.status(200).send({ message: 'Cart item deleted successfully', cart });
     } catch (error) {
-        res.status(400).send({ message: 'Error deleting cart item', error });
+        if (error instanceof ErrorGenerator) {
+            res.status(error.status).send({ error_type: error.type, message: error.message });
+            return;
+        }
+        const err = new ErrorGenerator(Errors.ERROR_DELETING, "Cart", error);
+        res.status(err.status).send({ error_type: err.type, message: err.message,error: err.error });
     }
 };

@@ -21,7 +21,7 @@ cartSchema.virtual<CartItemInterface<IProduct>>('items', {
   ref: 'CartItem',
   localField: '_id',
   foreignField: 'cart',
-  justOne: false
+  justOne: false,
 });
 
 // pre save hook
@@ -44,9 +44,10 @@ function transform(doc: Document, ret: Partial<CartInterface & Document>): Parti
   delete ret.createdAt;
   delete ret.updatedAt;
   delete ret.__v;
+  delete ret._id;
   return ret;
 }
 
-cartSchema.set('toJSON', { transform })
+cartSchema.set('toJSON', { transform,virtuals: true })
 
 export const Cart = model('Cart', cartSchema);

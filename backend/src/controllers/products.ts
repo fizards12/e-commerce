@@ -71,7 +71,6 @@ export const getProduct = async (req: RequestWithProduct, res: Response, next: N
 // Update product information by ID
 export const updateProduct = async (req: RequestWithProduct, res: Response, next: NextFunction) => {
     try {
-        console.log(req.body)
         let productData = JSON.parse(req.body.product) as ProductWithCategoryId;
         if (req.file) {
             const uploadResult = await uploadImage({ folder: 'products', public_id: `product_${productData.name}` }, req.file);
