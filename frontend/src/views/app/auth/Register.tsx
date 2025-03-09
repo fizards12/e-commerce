@@ -11,10 +11,10 @@ import {
   ErrorMessage,
   FormikHelpers,
 } from "formik";
-import { RegisterSchema } from "../../schemas/validations/auth";
-import Field from "../../components/atoms/Field/Field";
-import { IRole } from "../../schemas/role";
-import { IUser } from "../../schemas/user";
+import { RegisterSchema } from "../../../schemas/validations/auth";
+import Field from "../../../components/atoms/Field/Field";
+import { IRole } from "../../../schemas/role";
+import { IUser } from "../../../schemas/user";
 import { useRef } from "react";
 
 const initialState: IUser & { confirmPassword: string } = {

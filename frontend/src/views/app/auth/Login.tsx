@@ -1,8 +1,8 @@
 import { Link, useActionData, useSubmit } from "react-router-dom";
 import { Formik, Form, Field as FormikField, FormikHelpers } from "formik";
-import { LoginSchema } from "../../schemas/validations/auth";
-import Field from "../../components/atoms/Field/Field";
-import { IUser } from "../../schemas/user";
+import { LoginSchema } from "../../../schemas/validations/auth";
+import Field from "../../../components/atoms/Field/Field";
+import { IUser } from "../../../schemas/user";
 import { useRef } from "react";
 
 const initialState: Partial<IUser> = {

@@ -4,13 +4,13 @@ import {
     LoaderFunction,
     redirect,
 } from "react-router-dom";
-import { IUser } from "../../schemas/user";
-import store from "../../stores";
-import { login, register } from "../../services/auth";
-import { getUser } from "../../services/users";
-import { call } from "../../services/call";
-import { GeneralError } from "../../services/error";
-import { getRoles } from "../../services/roles";
+import { IUser } from "../../../schemas/user";
+import store from "../../../stores";
+import { login, register } from "../../../services/auth";
+import { getUser } from "../../../services/users";
+import { call } from "../../../services/call";
+import { GeneralError } from "../../../services/error";
+import { getRoles } from "../../../services/roles";
 
 export const loginAction: ActionFunction = async ({
     request,

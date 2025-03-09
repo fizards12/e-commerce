@@ -7,6 +7,7 @@ import CategoriesRoot from "./views/Categories/Root";
 import NewProduct from "./views/Products/NewProduct";
 import NewCategory from "./views/Categories/NewCategory";
 import ErrorElement from "./layout/ErrorElement";
+import { authRoutes } from "./auth/routes";
 
 const LazyProducts = LazyComponent(() => import("./views/Products/Products"));
 const LazyNewProduct = LazyComponent(() => import("./views/Products/NewProduct"));
@@ -21,6 +22,7 @@ export const dashboardRoutes: RouteObject = {
   path: "dashboard",
   element: <ProtectedRoute element={<LazyRoot />} />,
   children: [
+    authRoutes,
     {
       path: "user",
       element: <AuthorizedRoute element={<LazyUserPage />} role="TRADER" />,

@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { AppDispatch, RootState } from "../../stores";
-import { logoutThunk } from "../../stores/auth/authThunks";
+import { AppDispatch, RootState } from "../../../stores";
+import { logoutThunk } from "../../../stores/auth/authThunks";
 
 const Header = () => {
   const isAuthenticated = useSelector(

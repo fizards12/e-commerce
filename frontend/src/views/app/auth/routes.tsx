@@ -1,9 +1,9 @@
 import { RouteObject } from "react-router-dom";
-import AuthorizedRoute from "../../router/AuthorizedRoute";
-import ProtectedRoute from "../../router/ProtectedRoute";
+import AuthorizedRoute from "../../../router/AuthorizedRoute";
+import ProtectedRoute from "../../../router/ProtectedRoute";
 import { loginAction, registerAction, registerLoader } from "./actionsAndLoader";
-import AuthRoute from "../../router/AuthRoute";
-import LazyComponent from "../../components/atoms/HOC/lazyComponent";
+import AuthRoute from "../../../router/AuthRoute";
+import LazyComponent from "../../../components/atoms/HOC/lazyComponent";
 const Login = LazyComponent(() => import("./Login"));
 const Register = LazyComponent(() => import("./Register"));
 const ForgetPassword = LazyComponent(() => import("./ForgetPassword"));
