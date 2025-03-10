@@ -6,7 +6,7 @@ import ErrorElement from "./ErrorElement";
 
 const Root = () => {
   return (
-    <div className="flex h-screen transition-all">
+    <div className="bg-primary/10 flex h-screen transition-all">
       <Sidebar />
       <div className="flex w-full flex-col overflow-auto">
         <Header />

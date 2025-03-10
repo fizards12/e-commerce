@@ -3,7 +3,7 @@ import AuthenticatorGaurd from "../components/AuthenticatorGaurd"
 
 function Root() {
   return (
-    <div className="bg-primary/10 w-full min-h-screen">
+    <div className="w-full min-h-screen">
         <AuthenticatorGaurd/>
         <Outlet/>
     </div>
