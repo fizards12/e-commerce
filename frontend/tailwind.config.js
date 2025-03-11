@@ -1,4 +1,5 @@
 import daisyui from 'daisyui';
+import { winter } from 'daisyui/src/theming/themes';
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -14,7 +15,7 @@ export default {
     themes: [
       {
         light: {
-          ...require('daisyui/src/theming/themes')['winter'],
+          ...winter,
           primary: '#00677d',
           'primary-content': '#fff',
           'error-content': '#fff',
@@ -32,9 +33,6 @@ export default {
           '--rounded-btn': '6rem'
         }
       }
-
-      // "dark",
-      // "light",
     ],
   }
 }
