@@ -3,7 +3,7 @@ import Header from "./Header";
 
 const Root = () => {
   return (
-    <div>
+    <div className="app-body group">
       <Header />
       <Outlet />
     </div>

@@ -15,13 +15,13 @@ export default {
       {
         light: {
           ...require('daisyui/src/theming/themes')['winter'],
-          primary: '#1f15ff',
+          primary: '#00677d',
           'primary-content': '#fff',
           'error-content': '#fff',
-          // 'error':'#e21c26',
-          // "bg-primary" : "#000",
           secondary: '#A25AFF',
+          'secondary-content': '#fff',
           accent: '#0081FE',
+          'accent-content': '#fff',
           error: '#fa0000',
           success: '#008000',
           warning: '#ff8000',
@@ -29,9 +29,6 @@ export default {
           info: '#0000ee',
           "info-content": '#fff',
           // "neutral": "#3d4451",
-          // "base": "#f4f4f4f5",
-          // "base-100": "#f4f4f4f5",
-          // "bg-primary" : '#000',
           '--rounded-btn': '6rem'
         }
       }
