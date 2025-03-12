@@ -5,32 +5,33 @@ import { logout as logoutAction } from './auth';
 import store, { persistor } from '..';
 import { resetProducts } from '../products/products';
 import { resetCategories } from '../categories/categories';
+import { redirect } from 'react-router-dom';
 
 export const logoutThunk = createAsyncThunk(
   'auth/logoutUser',
   async (_, { dispatch }) => {
     try {
-        await call(logoutService, []);
-        console.log("LoggedOut");
-        dispatch(logoutAction());
-        resetStores();
+      await call(logoutService, []);
+      console.log("LoggedOut");
+      dispatch(logoutAction());
+      resetStores();
       persistor.purge();
-
+      redirect('/auth/login');
     } catch (error) {
-        console.log(error);
+      console.log(error);
     }
   }
 );
 
 export const getLoggedIn = createAsyncThunk(
   'auth/getLoggedIn',
-  async (_,{dispatch}) => {
+  async (_, { dispatch }) => {
     try {
-      const {message} = await getLoggedInUser()
+      const { message } = await getLoggedInUser()
       console.log(message)
       return message
     } catch (error) {
-      if(error instanceof Error){
+      if (error instanceof Error) {
         console.log(error)
         dispatch(logoutThunk())
       }
@@ -38,7 +39,7 @@ export const getLoggedIn = createAsyncThunk(
   })
 
 
-function resetStores(){
+function resetStores() {
   store.dispatch(resetProducts())
   store.dispatch(resetCategories())
 }

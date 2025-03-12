@@ -15,7 +15,7 @@ const Header = () => {
       <div className="container max-w-6xl mx-auto md:justify-between flex items-center">
         <div>
           <Link to="/">
-            <h3 className="text-primary">Exclusive</h3>
+            <h3 className="text-primary!">Exclusive</h3>
           </Link>
         </div>
         <div className="max-md:-order-1 group/menu">

@@ -37,7 +37,7 @@ const AutoComplete: React.FC<
       {({ selected }) => (
         <div
           className={`transition-colors duration-150 text-black hover:bg-base-300 ${
-            selected ? "!bg-primary !text-white" : ""
+            selected ? "bg-primary! text-white!" : ""
           }
            p-2`}
         >

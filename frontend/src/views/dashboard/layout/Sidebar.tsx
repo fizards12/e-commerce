@@ -35,8 +35,8 @@ const Sidebar = () => {
   return (
     <nav className="max-w-52 w-full h-full max-md:w-0">
       <Wrapper
-        className="h-full max-md:!p-0"
-        cardClassName="!p-0 max-md:drawer"
+        className="h-full max-md:p-0!"
+        cardClassName="p-0! max-md:drawer"
       >
         <input
           id="my-drawer"

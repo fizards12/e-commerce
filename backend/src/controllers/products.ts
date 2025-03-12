@@ -7,9 +7,12 @@ import { isObjectIdOrHexString } from 'mongoose';
 import { uploadImage } from '../services/cloudinary';
 import { IUser } from '../interfaces/user';
 import { Types } from 'mongoose';
+import { IRole } from '../interfaces/role';
+import { RequestWithData } from './carts';
+import { AuthenticatedRequest } from '../middlewares/auth';
 
 interface RequestWithProduct extends Request {
-    user?: IUser,
+    user?: IUser<Types.ObjectId | IRole>,
     body: {
         product: string;
     },
@@ -110,10 +113,10 @@ export const deleteProduct = async (req: RequestWithProduct, res: Response, next
 };
 
 // Get multiple products
-export const getProducts = async (req: Request & { user?: IUser }, res: Response, next: NextFunction) => {
+export const getProducts = async (req: AuthenticatedRequest<IRole>, res: Response, next: NextFunction) => {
     try {
         let query: {user?: Types.ObjectId | string} = {};
-        if(req.user?._id){
+        if(req.user?._id && req.user.role?.name?.toLowerCase() == 'admin'){
             query.user = req.user._id
         }
         const products = (await Product.find(query)).map((product) => product.toJSON());

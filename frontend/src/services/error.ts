@@ -2,6 +2,7 @@
 import { AxiosError } from "axios";
 import store from '../stores'; // Adjust the import path as necessary
 import { showToastThunk } from '../stores/app/app'; // Adjust the import path as necessary
+import { logoutThunk } from "../stores/auth/authThunks";
 
 export class GeneralError extends Error {
   message: string;
@@ -20,9 +21,7 @@ export class GeneralError extends Error {
   }
 }
 
-// Define a general error handler function
-export function handleError(error: unknown): GeneralError {
-  const dispatch = store.dispatch;
+export function extractError(error: unknown) : GeneralError {
   let generalError: GeneralError;
 
   if (error instanceof AxiosError) {
@@ -71,7 +70,17 @@ export function handleError(error: unknown): GeneralError {
     });
   }
 
+  
+  return generalError;
+}
+
+// Define a general error handler function
+export function handleError(error: unknown) {
+  const dispatch = store.dispatch;
+  const generatedError = extractError(error);
+  if(generatedError.status == 401){
+    dispatch(logoutThunk());
+  }
   // Dispatch toast notification
-  dispatch(showToastThunk({ message: generalError.message, type: 'error', duration: 2000 }));
-  throw generalError;
+  dispatch(showToastThunk({ message: generatedError.message, type: 'error', duration: 2000 }));
 }

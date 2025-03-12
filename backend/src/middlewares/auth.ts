@@ -9,7 +9,7 @@ import { JWT_SECRET } from '../env';
 import { clearTokenFromCookie } from '../services/jwt';
 import { ErrorGenerator } from '../services/error';
 
-export interface AuthenticatedRequest extends Request { user?: IUser };
+export interface AuthenticatedRequest<T=Types.ObjectId> extends Request { user?: IUser<T> };
 
 export const checkRole = (roles: string[]) => {
   return async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
@@ -25,7 +25,6 @@ export const checkRole = (roles: string[]) => {
       if (user.role && !roles.includes(user.role.name.toLowerCase())) {
         throw new ErrorGenerator(Errors.FORBIDDEN, "User");
       }
-
       next();
     } catch (error) {
       if(error instanceof ErrorGenerator){
@@ -47,7 +46,7 @@ export const validateToken = async (req: Request & { user?: IUser<Types.ObjectId
     if(decoded.exp && Date.now() >= decoded.exp * 1000){
       throw new ErrorGenerator(Errors.INVALID_TOKEN, "User");
     }
-    const user = await User.findById(decoded.id)
+    const user = await User.findById(decoded.id).populate('role');
     if(!user || user.email != decoded.email || !isObjectIdOrHexString(decoded.role) || user.role?.toHexString() != decoded.role){
       throw new ErrorGenerator(Errors.INVALID_PAYLOAD, "User");
     }
