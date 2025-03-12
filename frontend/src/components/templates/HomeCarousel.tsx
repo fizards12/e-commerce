@@ -49,7 +49,7 @@ const slides = [
 ];
 const HomeCarousel = () => {
   return (
-    <div className="p-5">
+    <div>
       <Carousel slides={slides} autoplay={{delay: 3000}} speed={800} containerClass="h-72" />
     </div>
   );

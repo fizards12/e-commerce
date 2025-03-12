@@ -65,7 +65,7 @@ const Carousel: React.FC<CarouselProps> = ({
         spaceBetween={spaceBetween}
         loop={loop}
         autoplay={autoplay}
-        className={`${swiperProps.className || ""} h-full mx-6`}
+        className={`${swiperProps.className || ""} h-full`}
         onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
         onSwiper={(swiper) => setSwiperInstance(swiper)}
         {...swiperProps}
@@ -80,14 +80,14 @@ const Carousel: React.FC<CarouselProps> = ({
       {/* Optional: Add custom controls if needed */}
       {showNavigation && (
         <>
-          <div className="absolute left-0 top-1/2 z-10 transform -translate-y-1/2">
+          <div className="absolute -left-7 top-1/2 z-10 transform -translate-y-1/2">
             <NavigationButton
               direction="prev"
               onClick={() => swiperInstance?.slidePrev()}
               aria-label="Previous slide"
             />
           </div>
-          <div className="absolute right-0 top-1/2 z-10 transform -translate-y-1/2">
+          <div className="absolute -right-7 top-1/2 z-10 transform -translate-y-1/2">
             <NavigationButton
               direction="next"
               onClick={() => swiperInstance?.slideNext()}

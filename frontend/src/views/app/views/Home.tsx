@@ -4,8 +4,8 @@ import HomeCarousel from "../../../components/templates/HomeCarousel";
 const Home = () => {
   return (
     <div>
-      <HomeCarousel />
-      <div className="container mx-auto">
+      <div className="container flex flex-col gap-5 mx-auto p-7">
+        <HomeCarousel />
         <FlashSale />
       </div>
     </div>

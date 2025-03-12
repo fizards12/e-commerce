@@ -7,7 +7,7 @@ type ProductCardProps = React.HTMLAttributes<HTMLDivElement> & {
 const ProductCard: React.FC<ProductCardProps> = ({ product, ...props }) => {
   return (
     <div
-      className="card border-2 hover:border-primary-container transition-colors border-neutral-200 overflow-hidden group/product max-w-52 w-full flex flex-col p-0"
+      className="card border-2 hover:border-primary-container transition-colors border-neutral-200 overflow-hidden group/product min-w-48 max-w-52 w-full flex flex-col p-0"
       {...props}
     >
       <div className="h-44 overflow-hidden bg-gray-100 flex justify-center items-center">
@@ -24,8 +24,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, ...props }) => {
         />
       </div>
       <div className="card-body p-3 text-primary">
-        <div className="flex flex-wrap">
-          <span className="text-base font-semibold flex-1/2">{product.name}</span>
+        <div className="flex flex-col gap-1">
+          <span className="text-base font-semibold">{product.name}</span>
           <span className="text-base font-bold">${product.price}</span>
         </div>
         <div className="card-actions justify-end">

@@ -12,7 +12,7 @@ const Header = () => {
   );
   return (
     <nav className="navbar relative w-full p-4 py-6 border-b border-gray-300 ">
-      <div className="container max-w-6xl mx-auto md:justify-between flex items-center">
+      <div className="container mx-auto md:justify-between flex items-center">
         <div>
           <Link to="/">
             <h3 className="text-primary!">Exclusive</h3>

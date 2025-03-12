@@ -6,13 +6,17 @@ import ProductCard from '../../templates/Product/ProductCard'
 
 const FlashSale = () => {
   const [products, error] = useFetchDocList('product')
-  if(error) throw error
+  if (error) throw error
   return (
-    <Section className='p-4 flex flex-col gap-8'>
-        <SectionHeader header="Today's" title="Flash Sales" />
-        <SectionBody className='flex flex-wrap gap-4'>
-            {products && Object.values(products).map((product: IProduct) => (<ProductCard key={product.id} product={product}/>))}
-        </SectionBody>
+    <Section className='flex flex-col gap-8'>
+      <SectionHeader header="Today's" title="Flash Sales" />
+      <SectionBody className='p-2'>
+        <div className='overflow-auto'>
+          <div className='flex gap-4 py-2'>
+            {products && Object.values(products).map((product: IProduct) => (<ProductCard key={product.id} product={product} />))}
+          </div>
+        </div>
+      </SectionBody>
     </Section>
   )
 }
