@@ -51,7 +51,6 @@ cartItemSchema.post('save', async function (doc) {
 // Update cart total after CartItem is removed
 cartItemSchema.post('findOneAndDelete', async function (doc?: CartItemInterface<Types.ObjectId>) {
   if (!doc) return;
-  console.log(doc)
   const cartId = doc.cart;
   const session = await startSession();
   session.startTransaction();

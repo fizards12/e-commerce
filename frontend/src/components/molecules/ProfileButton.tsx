@@ -15,7 +15,7 @@ const ProfileButton: React.FC = () => {
       </label>
       <ul
         tabIndex={0}
-        className="mt-3 p-2 overflow-hidden relative menu menu-compact dropdown-content bg-sky-200/40 backdrop-blur-xs rounded-box w-52"
+        className="mt-3 p-2 overflow-hidden relative menu menu-compact dropdown-content text-primary font-semibold bg-blue-200/70 backdrop-blur-md rounded-box w-52"
       >
         {/* Background */}
         {/* <div className="absolute top-0 left-0 w-full h-full bg-sky-200/20 "></div> */}

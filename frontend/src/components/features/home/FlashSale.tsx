@@ -11,7 +11,7 @@ const FlashSale = () => {
     <Section className='flex flex-col gap-8'>
       <SectionHeader header="Today's" title="Flash Sales" />
       <SectionBody className='p-2'>
-        <div className='overflow-auto'>
+        <div className='overflow-x-auto'>
           <div className='flex gap-4 py-2'>
             {products && Object.values(products).map((product: IProduct) => (<ProductCard key={product.id} product={product} />))}
           </div>

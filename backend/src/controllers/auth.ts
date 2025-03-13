@@ -52,6 +52,7 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
   } catch (error) {
     if(error instanceof ErrorGenerator){
       res.status(error.status).send({ error_type: error.type, message: error.message });
+      return;
     }
     let err = new ErrorGenerator(Errors.INVALID_CREDENTIALS, "User",error);
     next(err);

@@ -85,8 +85,7 @@
 }
 
 @utility alert-error {
-  color: var(--fallback-erc, oklch(var(--er) / var(--tw-text-opacity)));
-  --alert-bg: var(--fallback-er, oklch(var(--er) / 0.4));
+  @apply text-red-200;
 }
 
 @utility label-text-lg {

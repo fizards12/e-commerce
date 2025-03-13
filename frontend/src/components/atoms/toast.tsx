@@ -24,7 +24,7 @@ const Toast: React.FC = () => {
         
         <div
           ref={toastRef}
-          className={`toast toast-end toast-bottom p-4 text-white transition-all duration-300`}
+          className={`toast toast-end z-20 toast-bottom p-4 text-white transition-all duration-300`}
           style={{
             opacity: state === "entered" ? 1 : 0,
             transform:

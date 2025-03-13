@@ -78,9 +78,10 @@ export function extractError(error: unknown) : GeneralError {
 export function handleError(error: unknown) {
   const dispatch = store.dispatch;
   const generatedError = extractError(error);
-  if(generatedError.status == 401){
+  if(generatedError.status == 401 && store.getState().auth.isAuthenticated){
     dispatch(logoutThunk());
   }
   // Dispatch toast notification
   dispatch(showToastThunk({ message: generatedError.message, type: 'error', duration: 2000 }));
+  return generatedError;
 }

@@ -11,6 +11,7 @@ import { getUser } from "../../../services/users";
 import { call } from "../../../services/call";
 import { GeneralError } from "../../../services/error";
 import { getRoles } from "../../../services/roles";
+import {login as loginStoreAction } from "../../../stores/auth/auth";
 
 export const loginAction: ActionFunction = async ({
     request,
@@ -22,7 +23,7 @@ export const loginAction: ActionFunction = async ({
     try {
         const data = await call(login, [email, password]);
         const response = await call(getUser, [data.id]);
-        store.dispatch({ type: "auth/login", payload: response.user });
+        store.dispatch(loginStoreAction(response.user));
         redirect("/");
         return new Response(
             JSON.stringify({ message: "Login successful", status: 200 }),
@@ -30,6 +31,7 @@ export const loginAction: ActionFunction = async ({
         );
     } catch (err) {
         const error = err as GeneralError;
+        console.log(err)
         return new Response(JSON.stringify({ error: error.message }), {
             status: error.status,
             headers: { "Content-Type": "application/json" },
