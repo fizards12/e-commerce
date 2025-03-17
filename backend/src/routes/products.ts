@@ -5,13 +5,17 @@ import { validateToken } from '../middlewares/auth';
 
 const router = express.Router();
 // Get product details by ID
-router.get('/:id', getProduct);
+//TODO: Create a view controller for ecommerce app
+router.get('/view/:id', getProduct);
 
 // Get multiple products
-router.get('/', getProducts);
+//TODO: Create a view controller for ecommerce app
+router.get('/view', getProducts);
 
 router.use(validateToken)
 
+// Get multiple products
+router.get('/', getProducts);
 // Create a new product
 router.post('/',upload.single('img'), createProduct);
 

@@ -116,7 +116,7 @@ export const deleteProduct = async (req: RequestWithProduct, res: Response, next
 export const getProducts = async (req: AuthenticatedRequest<IRole>, res: Response, next: NextFunction) => {
     try {
         let query: {user?: Types.ObjectId | string} = {};
-        if(req.user?._id && req.user.role?.name?.toLowerCase() == 'admin'){
+        if(req.user?._id && req.user.role?.name?.toLowerCase() == 'trader'){
             query.user = req.user._id
         }
         const products = (await Product.find(query)).map((product) => product.toJSON());

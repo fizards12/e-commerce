@@ -4,7 +4,7 @@ import store from '../stores';
 import { toggleLoading } from '../stores/app/app';
 import { handleError } from './error';
 
-const axiosInstacne = axios.create({
+const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_SERVER_URL,
     withCredentials: true,
     headers: {
@@ -12,7 +12,7 @@ const axiosInstacne = axios.create({
     }
 })
 
-export default axiosInstacne;
+export default axiosInstance;
 
 // Define a general call function
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

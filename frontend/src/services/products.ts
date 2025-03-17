@@ -1,6 +1,16 @@
 import { IProduct } from "../schemas/product"
 import { ICategory } from "../schemas/category"
 import axios from "./call"
+
+export const getList = async () => {
+    const response = await axios.get<{ products: IProduct<string>[] }>(`products/view`);
+    return response.data;
+}
+export const getDoc = async (id: string) => {
+    const response = await axios.get<{ product: IProduct<string> }>(`products/view/${id}`);
+    return response.data;
+}
+
 export const getProducts = async () => {
     const response = await axios.get<{ products: IProduct<string>[] }>(`products`);
     return response.data;
