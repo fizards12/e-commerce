@@ -18,14 +18,15 @@ const Section: React.FC<Props> = ({
   );
 };
 
-export const SectionHeader: React.FC<HeaderProps> = ({ header, title }) => {
+export const SectionHeader: React.FC<HeaderProps> = ({ header, title,children,className = "",...props }) => {
   return (
-    <div>
-      <div className="flex mb-2 gap-4 items-center font-semibold text-primary-container">
+    <div className={`flex flex-col gap-6 ${className}`} {...props}>
+      <div className="flex gap-4 items-center font-semibold text-primary-container">
         <div className="w-5 h-10 rounded-sm bg-primary-container" />
         <div>{header}</div>
       </div>
-      <h3 className="text-primary">{title}</h3>
+      {title && <h2 className="text-primary">{title}</h2>}
+      {children}
     </div>
   );
 };

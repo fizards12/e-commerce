@@ -1,13 +1,14 @@
 import { BaseQueryFn } from '@reduxjs/toolkit/query/react';
 import { call } from '../../services/call';
 
-const customBaseQuery: BaseQueryFn<
+const customBaseQuery: <T>()=>BaseQueryFn<
   {
-    fetcher: (...args: unknown[]) => Promise<unknown>;
+    fetcher: (...args: unknown[]) => Promise<T>;
     params?: unknown[];
     loading?: boolean;
-  }
-> = async<T>({ fetcher, params = [], loading = true }) => {
+  },
+  T
+> = ()=> async({ fetcher, params = [], loading = true }) => {
   try {
     const data = await call(fetcher, params, loading);
     return { data };
