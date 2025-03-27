@@ -22,10 +22,10 @@ const FlashSale : React.FC<Props> = ({products}) => {
     ]
   }
   return (
-    <Section className='flex flex-col gap-8'>
+    <Section>
       <SectionHeader header="Today's" title="Flash Sales" />
-      <SectionBody className='px-2 flex flex-col gap-20'>
-        <div className='overflow-x-auto mx-auto'>
+      <SectionBody className='gap-20'>
+        <div className='overflow-x-auto mx-auto w-full'>
           <div className='flex gap-4 py-2'>
             {List}            
           </div>

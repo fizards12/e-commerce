@@ -12,7 +12,7 @@ const Section: React.FC<Props> = ({
   ...props
 }) => {
   return (
-    <div className={className + " "} {...props}>
+    <div className={className + " flex flex-col gap-8"} {...props}>
       {children}
     </div>
   );
@@ -32,9 +32,10 @@ export const SectionHeader: React.FC<HeaderProps> = ({ header, title,children,cl
 };
 export const SectionBody: React.FC<HTMLAttributes<HTMLDivElement>> = ({
   children,
+  className = "",
   ...props
 }) => {
-  return <div {...props}>{children}</div>;
+  return <div className={className + ' px-2 flex flex-col'} {...props}>{children}</div>;
 };
 export const SectionFooter: React.FC<HTMLAttributes<HTMLDivElement>> = () => {
   return <div>SectionFooter</div>;

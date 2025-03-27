@@ -62,6 +62,8 @@
   }
 }
 
+/* Alert styles */
+
 @utility alert {
   @apply flex my-2 justify-center font-semibold;
 }
@@ -88,6 +90,8 @@
   @apply text-red-200;
 }
 
+/* Label text styles */
+
 @utility label-text-lg {
   @apply text-lg;
 }
@@ -104,8 +108,16 @@
   @apply text-xs;
 }
 
+/* Card styles */
+
 @utility card {
   @apply shadow-lg bg-white p-4;
+}
+
+/* Buttons styles */
+
+@utility btn {
+  @apply font-normal;
 }
 
 h1 {

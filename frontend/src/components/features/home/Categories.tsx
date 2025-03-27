@@ -21,9 +21,9 @@ const Categories = () => {
         ]
     }
     return (
-        <Section className='flex flex-col gap-8'>
+        <Section>
             <SectionHeader header="Categories" title="Browse Categories" />
-            <SectionBody className='px-2 flex flex-col gap-20'>
+            <SectionBody>
                 <div className='overflow-x-auto mx-auto'>
                     <div className='flex gap-4 py-2'>
                         {List}

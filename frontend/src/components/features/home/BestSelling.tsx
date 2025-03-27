@@ -22,15 +22,15 @@ const BestSelling: React.FC<Props> = ({ products }) => {
         ]
     }
     return (
-        <Section className='flex flex-col gap-8'>
+        <Section>
             <SectionHeader header="This Month">
                 <div className='flex gap-4 justify-between flex-wrap'>
-                    <h2>Best Selling</h2>
+                    <h2 className='text-primary'>Best Selling Products</h2>
                     <Link to="/" className='btn btn-primary w-full max-w-32'>View All</Link>
                 </div>
             </SectionHeader>
-            <SectionBody className='px-2 flex flex-col gap-20'>
-                <div className='overflow-x-auto mx-auto'>
+            <SectionBody className='gap-20'>
+                <div className='overflow-x-auto mx-auto w-full'>
                     <div className='flex gap-4 py-2'>
                         {List}
                     </div>
