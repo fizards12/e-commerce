@@ -6,9 +6,10 @@ import ErrorElement from "./ErrorElement";
 
 const Root = () => {
   return (
-    <div className="bg-primary/10 flex h-screen transition-all">
+    <div className="bg-primary/10 max-md:drawer flex h-screen transition-all">
+      <input id="my-drawer" type="checkbox" className="max-md:drawer-toggle md:hidden" />
       <Sidebar />
-      <div className="flex w-full flex-col overflow-auto">
+      <div className="flex max-md:drawer-content w-full flex-col overflow-auto">
         <Header />
         <div className="flex-1">
           <ErrorBoundary FallbackComponent={ErrorElement}>

@@ -13,10 +13,10 @@ function Header() {
     <Wrapper className="h-auto">
       <header className="w-full flex justify-between">
         <div className="flex gap-2 items-center">
-          <div className="drawer-content md:hidden">
+          <div className="md:hidden">
             <label
               htmlFor="my-drawer"
-              className="btn btn-ghost rounded-box drawer-button"
+              className="btn btn-ghost rounded-box"
             >
               <BiMenu size={25} />
             </label>

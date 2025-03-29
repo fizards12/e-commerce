@@ -1,9 +1,9 @@
 import { tv } from "tailwind-variants";
 
 const baseClasses = {
-  input: "input input-bordered",
-  select: "select select-bordered",
-  textarea: "textarea textarea-bordered",
+  input: "input input-bordered w-full",
+  select: "select select-bordered w-full",
+  textarea: "textarea textarea-bordered w-full",
   checkbox: "checkbox checkbox-bordered",
   radio: "radio radio-bordered",
   button: "button button-bordered",

@@ -4,6 +4,7 @@ import { CgProfile } from "react-icons/cg";
 import { RiProductHuntFill } from "react-icons/ri";
 import Wrapper from "../../../components/atoms/Wrapper/Wrapper";
 import { BiCategory } from "react-icons/bi";
+import { useEffect, useLayoutEffect, useState } from "react";
 
 const routesLinks = [
   {
@@ -32,23 +33,24 @@ const routesLinks = [
 ];
 
 const Sidebar = () => {
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  useLayoutEffect(()=>{
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  },[])
   return (
-    <nav className="max-w-52 w-full h-full max-md:w-0">
+    <nav className={`md:max-w-52 w-full h-full ${windowWidth < 768 ?'drawer-side': ""} z-50`}>
+      <label
+        htmlFor="my-drawer"
+        aria-label="close sidebar"
+        className="drawer-overlay"
+      ></label>
       <Wrapper
         className="h-full max-md:p-0!"
-        cardClassName="p-0! max-md:drawer"
+        cardClassName="p-0! max-md:rounded-none"
       >
-        <input
-          id="my-drawer"
-          type="checkbox"
-          className="drawer-toggle md:hidden"
-        />
-        <div className="max-md:drawer-side z-50 h-full">
-          <label
-            htmlFor="my-drawer"
-            aria-label="close sidebar"
-            className="drawer-overlay"
-          ></label>
+        <div className="z-50 h-full">
           <div className="max-md:p-2 h-full max-md:max-w-52 w-full">
             <div className="max-md:bg-white max-md:rounded-box h-full">
               <div className="px-1 items-start flex-col w-full">

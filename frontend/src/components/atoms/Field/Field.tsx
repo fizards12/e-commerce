@@ -47,7 +47,7 @@ const Field: FC<Props & FieldConfig> = ({
     inputAsArr.find((v) => v === as) as keyof typeof inputVariants
   );
   return (
-    <div className={`form-control ${classes.wrapperClass || ""}`}>
+    <div className={`w-full flex flex-col ${classes.wrapperClass || ""}`}>
       <label htmlFor={props.id} className={`label ${classes.labelClass || ""}`}>
         <span className="label-text">{label}</span>
       </label>
