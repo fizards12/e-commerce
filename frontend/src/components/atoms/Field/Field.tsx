@@ -11,6 +11,7 @@ interface Props
   as?: "input" | "select" | "textarea" | "checkbox" | "radio" | "button";
   size: "lg" | "md" | "sm";
   touched?: boolean;
+  fieldStyle?: "outlined" | "filled";
   classes?: {
     wrapperClass?: string;
     fieldClass?: string;
@@ -37,6 +38,7 @@ const Field: FC<Props & FieldConfig> = ({
   },
   name,
   as = "input",
+  fieldStyle = "outlined",
   error,
   touched,
   label,
@@ -61,6 +63,7 @@ const Field: FC<Props & FieldConfig> = ({
           size,
           error: !!error && touched,
           touched: touched,
+          type: fieldStyle,
         })} ${classes.fieldClass || ""}`}
       />
       <ErrorMessage

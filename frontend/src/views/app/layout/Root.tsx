@@ -6,7 +6,7 @@ import ErrorElement from "../../dashboard/layout/ErrorElement";
 const Root = () => {
   return (
     <ErrorBoundary FallbackComponent={ErrorElement}>
-      <div>
+      <div className="flex-1 flex flex-col w-full">
         <Header />
         <Outlet />
       </div>

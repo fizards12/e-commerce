@@ -63,7 +63,7 @@ const touchedClasses = {
 export function inputVariants(type: "input" | "select" | "textarea" | "checkbox" | "radio" | "button") {
   const baseClass = baseClasses[type];
   return tv({
-    base: `${baseClass} ${type === "checkbox" || type === "radio" ? "" : "rounded-md"}`,
+    base: `${baseClass} !outline-none ${type === "checkbox" || type === "radio" ? "" : "rounded-md"}`,
     variants: {
       size: sizeClasses[type],
       error: {
@@ -74,11 +74,16 @@ export function inputVariants(type: "input" | "select" | "textarea" | "checkbox"
         true: touchedClasses[type],
         false: "",
       },
+      type: {
+        outlined: "",
+        filled: "border-0 focus:bg-base-200 border-b-2 rounded-none",
+      }
     },
     defaultVariants: {
       size: "md",
       error: false,
       touched: false,
+      type: "outlined",
     },
   });
 }
