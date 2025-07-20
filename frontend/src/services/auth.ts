@@ -25,3 +25,13 @@ export const getLoggedInUser = async () => {
   const { data } = await axios.get<{ message?: string}>("auth/loggedIn");
   return data;
 };
+
+export const forgetPassword = async (email: string) => {
+  const { data } = await axios.post<{ message?: string}>("auth/forget-password", { email });
+  return data;
+};
+
+export const resetPassword = async (token: string, password: string) => {
+  const { data } = await axios.post<{ message?: string}>("auth/reset-password", { token, password });
+  return data;
+}

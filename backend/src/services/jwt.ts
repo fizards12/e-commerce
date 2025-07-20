@@ -2,7 +2,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { JWT_SECRET, PRODUCTION_ENV } from "../env";
 import { Response } from "express";
 import { Request } from "express";
-
+import {randomBytes} from "crypto";
 // ...existing code...
 
 /**
@@ -61,3 +61,9 @@ export function clearTokenFromCookie(res: Response): void {
     secure: process.env.NODE_ENV === PRODUCTION_ENV,
   });
 }
+
+
+export function generateResetToken (key : string | number,email: string) : string {
+  const token = jwt.sign({key,email}, JWT_SECRET, { expiresIn: "1m" });
+  return token
+};

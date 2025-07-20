@@ -24,7 +24,7 @@ export const createProduct = async (req: RequestWithProduct, res: Response, next
     try {
         let productData = JSON.parse(req.body.product) as ProductWithCategoryId;
         if (req.file) {
-            const uploadResult = await uploadImage({ folder: 'products', public_id: `product_${productData.name}` }, req.file);
+            const uploadResult = await uploadImage({ folder: 'products', public_id: `product_${productData.name?.split(' ').join('_')}` }, req.file);
             productData.img = uploadResult.secure_url;
         }
         let userId = req.user?._id;
